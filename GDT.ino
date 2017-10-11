@@ -149,8 +149,8 @@ void (*runFuncs[])(void) = {&runSpriteMaker, &runSpriteManager, &runEngine};
 
 /* getTouchPoint() - returns a TSPoint variable representing the point 
  *                   that is being touched. X and Y represent coordinates
- *                   on the screen. Z represents touch screen. If Z = 500,
- *                   then the touch is valid.
+ *                   on the screen. Z represents touch strength. If Z = 500,
+ *                   then the touch is valid / strong enough.
  *                   Example use:
  *                   void foo(){
  *                    TSPoint p = getTouchPoint();
