@@ -261,8 +261,8 @@ void loop(void) {
 
 /* pushToState() - OS Function that pushes to a new state. state corresponds to an index in the drawFuncs and
  *          runFuncs array. Each OS State has a draw function and a run function associated with it and
- *      Inputs:
  *          should be #defined at the top of this file under "OS States".
+ *      Inputs:
  *          state - the index of the OS State to push to.
   */
 void pushToState(int state){
