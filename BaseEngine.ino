@@ -1,4 +1,8 @@
-//byte sprites[numSprites][8][8];
+/*  
+ *  BaseEngine.ino - responsible for running the actual GAME. When playing
+ *  or playtesting the game, this OS State will be used.
+*/
+
 
 void drawEngine(void){
   tft.fillScreen(GREEN);
