@@ -98,7 +98,7 @@ byte sprites[numSprites][8][8];
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 Elegoo_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 
-
+int keydown = 1;
 
 
 /* 
