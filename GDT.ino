@@ -155,6 +155,10 @@ int currentSprite = 0;
 char keyboardS[100];
 int keyboardSL = 0;
 
+// map data [Width in tiles][Height in tiles][Number of Maps]
+byte maps[8][6][4];
+
+int standardMapRes = 5;
 
 /* 
  *  #########################################################################
@@ -280,6 +284,14 @@ void setup(void) {
   }
   tft.begin(identifier);
   tft.setRotation(1);
+
+  for (int i = 0; i < 20; i++){
+    for (int j = 0; j < 15; j++){
+      for (int k = 0; k < 4; k ++){
+        maps[i][j][k] = 0;
+      }
+    }
+  }
 
   pushToState(osState);
  
@@ -411,6 +423,28 @@ void drawSprite(int x, int y, int spriteN){
   for (int j = 0; j < 8; j++){
     for (int i = 0; i < 8; i++){
       tft.fillRect(x + i * squareP, y + j * squareP, squareP, squareP, colors[sprites[spriteN][i][j]]);
+    }
+  }
+}
+
+
+void drawSpriteWithRes(int x, int y, int spriteN, int res){
+  for (int j = 0; j < 8; j++){
+    for (int i = 0; i < 8; i++){
+      tft.fillRect(x + i * res, y + j * res, res, res, colors[sprites[spriteN][i][j]]);
+    }
+  }
+}
+
+
+/* drawMap() - draws the map at a given set of coordinates with a given resolution where res is the number of screen pixels
+               per sprite pixel.*/
+
+void drawMap(int x, int y, int mapID, int res){
+  int spriteDim = res * 8;
+  for (int j = 0; j < 15; j++){
+    for (int i = 0; i < 20; i++){
+      drawSpriteWithRes(x + spriteDim * i, y + spriteDim * j, maps[i][j][mapID], res);
     }
   }
 }
