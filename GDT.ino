@@ -45,6 +45,7 @@ using namespace std;
 #define BROWN 0x7260
 #define PALE 0xE637
 #define GOLD 0xD566
+#define TRANSPARENT 0x0001
 
 #define BOXSIZE 30
 #define spriteTileW 48
@@ -64,7 +65,7 @@ struct Button {
 };
 
 const unsigned colors[16] = {BLACK, DARKGRAY, RED, YELLOW, GOLD, GREEN, CYAN, MAGENTA, 
-                       WHITE, LIGHTGRAY, PALE, ORANGE, BROWN, DARKGREEN, BLUE, LIGHTBLUE};
+                       WHITE, LIGHTGRAY, TRANSPARENT, ORANGE, BROWN, DARKGREEN, BLUE, PALE};
 #define numSprites 15
 byte sprites[numSprites][8][8];
 
@@ -160,7 +161,7 @@ char keyboardS[100];
 int keyboardSL = 0;
 
 // map data [Width in tiles][Height in tiles][Number of Maps]
-byte maps[8][6][4];
+byte *maps;;//[8][6][4];
 
 int standardMapRes = 5;
 
@@ -241,7 +242,7 @@ bool isNewTouch(){
   */
 void setup(void) {
 
-  programStack = new vector<int>();
+
   buttons = new vector<Button*>();
 
   Serial.begin(9600);
@@ -288,14 +289,17 @@ void setup(void) {
   }
   tft.begin(identifier);
   tft.setRotation(1);
-
+  //[8][6][4];
+  maps = malloc(sizeof(byte) * 8 * 6 * 4);
   for (int i = 0; i < 20; i++){
     for (int j = 0; j < 15; j++){
       for (int k = 0; k < 4; k ++){
-        maps[i][j][k] = 0;
+        //maps[i][j][k] = 0;
+        setMaps(i, j, k, 0);
       }
     }
   }
+  programStack = new vector<int>();
 
   pushToState(osState);
  
@@ -319,10 +323,17 @@ void loop(void) {
  *          state - the index of the OS State to push to.
   */
 void pushToState(int state){
+  Serial.println("pushToState");
   clearButtons();
+  for (int i = 0; i < programStack->size(); i++){
+    Serial.print("Stack var: ");
+    Serial.println(programStack->at(i));
+  }
+  
   programStack->push_back(state);
   drawFuncs[state]();
   osState = state;
+  Serial.println("DONE PUSH!");
 }
 
 /* popState() - OS Function that pops back to the previous state. 
@@ -331,9 +342,11 @@ void pushToState(int state){
  *                unify the function headers for popState and pushToState
   */
 void popState(int rip){
+  Serial.println("POPPING OS STATE!");
   programStack->pop_back();
   int state = programStack->back();
   pushToState(state);
+  Serial.println("PUSH!");
 }
 
 /* 
@@ -426,7 +439,9 @@ void drawSprite(int x, int y, int spriteN){
   int squareP = spriteTileW / 8;
   for (int j = 0; j < 8; j++){
     for (int i = 0; i < 8; i++){
-      tft.fillRect(x + i * squareP, y + j * squareP, squareP, squareP, colors[sprites[spriteN][i][j]]);
+      if (colors[sprites[spriteN][i][j]] != TRANSPARENT){
+        tft.fillRect(x + i * squareP, y + j * squareP, squareP, squareP, colors[sprites[spriteN][i][j]]);
+      }
     }
   }
 }
@@ -448,8 +463,17 @@ void drawMap(int x, int y, int mapID, int res){
   int spriteDim = res * 8;
   for (int j = 0; j < 15; j++){
     for (int i = 0; i < 20; i++){
-      drawSpriteWithRes(x + spriteDim * i, y + spriteDim * j, maps[i][j][mapID], res);
+      drawSpriteWithRes(x + spriteDim * i, y + spriteDim * j, getFromMaps(i, j, mapID), res);//maps[i][j][mapID], res);
     }
   }
+}
+
+
+byte getFromMaps(int x, int y, int z){
+  return maps[6*4*x + 4*y + z];
+}
+
+void setMaps(int x, int y, int z, byte num){
+  maps[6*4*x + 4*y + z] = num;
 }
 

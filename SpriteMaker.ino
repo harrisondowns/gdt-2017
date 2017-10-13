@@ -20,9 +20,18 @@ int colorInd = 0;
 
 void drawSpriteMaker(void){
   tft.fillScreen(BLACK);
+
+  
   for (int x = 0; x < 2; x++){
     for (int y = 0; y < 8; y++){
-      tft.fillRect(1 + x * BOXSIZE, BOXSIZE*y + 1, BOXSIZE, BOXSIZE, colors[x * 8 + y]);
+      if (colors[x * 8 + y] != TRANSPARENT){
+        tft.fillRect(1 + x * BOXSIZE, BOXSIZE*y + 1, BOXSIZE, BOXSIZE, colors[x * 8 + y]);
+      }
+      else{
+        tft.drawLine(1 + x * BOXSIZE, BOXSIZE*y + 1, (x + 1) * BOXSIZE, BOXSIZE * (y + 1), WHITE);
+        tft.drawLine((x + 1) * BOXSIZE, BOXSIZE*y + 1, 1 + x * BOXSIZE, BOXSIZE * (y + 1), WHITE);
+        
+      }
     }
   }
 
@@ -58,11 +67,19 @@ void drawSpriteMaker(void){
     int v = y * 12 * 2;
     tft.drawLine(sbX, sbY + v, sbMX, sbY + v, WHITE);
   }
-  osState = 1;
 
   for (int y = 0; y < 8; y++){
     for (int x = 0; x < 8; x++){
-      tft.fillRect(sbX + x * sbS + 1, sbY + y * sbS + 1, sbS - 1, sbS - 1, colors[sprites[currentSprite][x][y]]);
+      if (colors[sprites[currentSprite][x][y]] != TRANSPARENT){
+        tft.fillRect(sbX + x * sbS + 1, sbY + y * sbS + 1, sbS - 1, sbS - 1, colors[sprites[currentSprite][x][y]]);
+      }
+      else{
+       /* tft.drawLine(sbX + x * sbS + 1, sbY + y * sbS + 1, sbX + (x + 1) * sbS + 1, sbY + (y + 1) * sbS + 1, WHITE);
+        tft.drawLine(sbX + (x + 1) * sbS + 1, sbY + y * sbS + 1, sbX + x * sbS + 1, sbY + (y + 1) * sbS + 1, WHITE);
+       */
+     //   tft.drawLine((x + 1) * BOXSIZE, BOXSIZE*y + 1, 1 + x * BOXSIZE, BOXSIZE * (y + 1), WHITE);
+        
+      }
       makeButton(sbX + x * sbS + 1, sbY + y * sbS + 1, sbS - 1, sbS - 1, 
                               colors[sprites[currentSprite][x][y]], WHITE, BLACK, "", placeTile, y * 8 + x) ;
 
