@@ -59,7 +59,7 @@ struct Button {
   int p;
 };
 
-unsigned colors[16] = {BLACK, DARKGRAY, RED, YELLOW, GOLD, GREEN, CYAN, MAGENTA, 
+const unsigned colors[16] = {BLACK, DARKGRAY, RED, YELLOW, GOLD, GREEN, CYAN, MAGENTA, 
                        WHITE, LIGHTGRAY, PALE, ORANGE, BROWN, DARKGREEN, BLUE, LIGHTBLUE};
 #define numSprites 15
 byte sprites[numSprites][8][8];
@@ -98,7 +98,8 @@ byte sprites[numSprites][8][8];
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 Elegoo_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 
-int keydown = 1;
+bool resetFramesFlag = false;
+int framesSinceTouch = 0;
 
 
 /* 
@@ -125,7 +126,7 @@ vector<int>* programStack;
 vector<Button*>* buttons;
 
 // osState: current screen of the OS
-int osState = KEYBOARD_INPUT;//SPRITE_MANAGER;
+int osState = SPRITE_MANAGER;
 
 // functions that draw each OS State
 void (*drawFuncs[])(void) = {&drawSpriteMaker, 
@@ -153,9 +154,6 @@ int currentSprite = 0;
 // keyboard string variable.
 char keyboardS[100];
 int keyboardSL = 0;
-
-
-
 
 
 /* 
@@ -187,6 +185,11 @@ int keyboardSL = 0;
  *                   }
   */
 TSPoint getTouchPoint(){
+  if (resetFramesFlag == true){
+    framesSinceTouch = 0;
+    resetFramesFlag = false;
+  }
+  
   digitalWrite(13, HIGH);
   TSPoint p = ts.getPoint();
   digitalWrite(13, LOW);
@@ -206,10 +209,24 @@ TSPoint getTouchPoint(){
 
     // set p to 500 if its pressed enough (500 is the signal code)
     p.z = 500;
+    resetFramesFlag = true;
+  }
+  else{
+    framesSinceTouch++;
     
   }
   return p;
 }
+
+/* isNewTouch() returns whether the given touch (the last touch given from getTouchPoint()) is a new touch 
+  or a continuation of a previous touch. Best called right after getTouchPoint().*/
+bool isNewTouch(){
+  if (framesSinceTouch > 100){
+    return true;
+  }
+  return false;
+}
+
 
 /* setup() - Arduino's required "setup()" function that initializes all necessary
  *           OS Variables, as well as the touch screen and the graphics library.
@@ -350,6 +367,17 @@ void clearButtons(){
     delete b;
   }
   buttons->clear();
+}
+
+
+/* drawRect() draws a rectangle (does not fill in). Used to hide the tft object from other places.*/
+void drawRect(int x, int y, int w, int h, unsigned c){
+  tft.drawRect(x, y, w, h, c);
+}
+
+/* fillRect() fills in a rectangle. Used to hide the tft object from other places (ABSTRACTION)*/
+void fillRect(int x, int y, int w, int h, unsigned c){
+  tft.fillRect(x, y, w, h, c);
 }
 
 

@@ -51,7 +51,8 @@ void runSpriteManager(void){
       }
     }
     if (a == 0){
-      pushToState(BASE_ENGINE);
+      setKeyboardMaxLength(40);
+      pushToState(KEYBOARD_INPUT);
     }
  
   }
