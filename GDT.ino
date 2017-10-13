@@ -116,6 +116,7 @@ Elegoo_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 #define SPRITE_MAKER 0 
 #define SPRITE_MANAGER 1 // screen that shows each sprite that can be selected
 #define BASE_ENGINE 2    // base game play
+#define KEYBOARD_INPUT 3
 
 // dynamic array of OSState used in popState() and pushToState()
 vector<int>* programStack;
@@ -124,18 +125,37 @@ vector<int>* programStack;
 vector<Button*>* buttons;
 
 // osState: current screen of the OS
-int osState = SPRITE_MANAGER;
-
-// state variable passed between Sprite Manager and Sprite Maker
-int currentSprite = 0;
+int osState = KEYBOARD_INPUT;//SPRITE_MANAGER;
 
 // functions that draw each OS State
 void (*drawFuncs[])(void) = {&drawSpriteMaker, 
                              &drawSpriteManager, 
-                             &drawEngine};
+                             &drawEngine,
+                             &drawKeyboard};
 
 // functions that get called every loop for each OS State
-void (*runFuncs[])(void) = {&runSpriteMaker, &runSpriteManager, &runEngine};
+void (*runFuncs[])(void) = {&runSpriteMaker, 
+                            &runSpriteManager, 
+                            &runEngine,
+                            &runKeyboard};
+
+/* 
+ *  #########################################################################
+ *  ###                                                                   ###
+ *  ###                Shared Vars Between States                         ###
+ *  ###                                                                   ###
+ *  #########################################################################
+*/
+
+// state variable passed between Sprite Manager and Sprite Maker
+int currentSprite = 0;
+
+// keyboard string variable.
+char keyboardS[100];
+int keyboardSL = 0;
+
+
+
 
 
 /* 
@@ -344,6 +364,13 @@ void drawButton(Button* but){
   tft.setTextColor(but->textColor);
   tft.setTextSize(1);
   tft.println(but->text);
+}
+
+void drawText(int x, int y, int size, char *text, unsigned color){
+  tft.setCursor(x, y);
+  tft.setTextColor(color);
+  tft.setTextSize(size);
+  tft.println(text);
 }
 
 /* drawSprite() - draws a sprite at a given set of coordinates.
