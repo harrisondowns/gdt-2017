@@ -132,6 +132,7 @@ int framesSinceTouch = 0;
 #define BG_COLOR 8 // set background color
 #define SET_IF_COND 9
 #define SELECT_MAP 10 // select a map to edit
+#define TRANSFER_MAKER 11 // map transfer editor
 
 
 // dynamic array of OSState used in popState() and pushToState()
@@ -155,7 +156,8 @@ void (*drawFuncs[])(void) = {&drawSpriteMaker,
                              &drawSetVar,
                              &drawBGColor,
                              &drawConditionalMaker,
-                             &drawMapSelect};
+                             &drawMapSelect,
+                             &drawTransfer};
 
 // functions that get called every loop for each OS State
 void (*runFuncs[])(void) = {&runSpriteMaker, 
@@ -168,7 +170,8 @@ void (*runFuncs[])(void) = {&runSpriteMaker,
                             &runSetVar,
                             &runBGColor,
                             &runConditionalMaker,
-                            &runMapSelect};
+                            &runMapSelect,
+                            &runTransfer};
 
 
 /* 
@@ -204,6 +207,7 @@ struct Event{
   byte op;
   byte next;
   void *val;
+  byte x, y, z;
 };
 
 struct TileEvent{

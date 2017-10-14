@@ -18,7 +18,7 @@ void drawSetVar(){
   
   tft.fillScreen(LIGHTGRAY);
 
-  delay(1);
+ // delay(1);
   drawText(50, 10, 3, "Set Variable", WHITE);
 
   drawButton(makeButton(20, 50, 100, 50, DARKGRAY, BLACK, WHITE, "", selectVar, 0));
