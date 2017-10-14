@@ -63,7 +63,10 @@ struct Button {
 const unsigned colors[16] = {BLACK, DARKGRAY, RED, YELLOW, GOLD, GREEN, CYAN, MAGENTA, 
                        WHITE, LIGHTGRAY, TRANSPARENT, ORANGE, BROWN, DARKGREEN, BLUE, PALE};
 #define numSprites 15
-byte sprites[numSprites][8][8];
+
+byte *sprites;
+
+
 
 
 /* 
@@ -119,6 +122,7 @@ int framesSinceTouch = 0;
 #define SPRITE_MANAGER 1 // screen that shows each sprite that can be selected
 #define BASE_ENGINE 2    // base game play
 #define KEYBOARD_INPUT 3
+#define BASE_MAKER 4 //map editor
 
 // dynamic array of OSState used in popState() and pushToState()
 vector<int>* programStack;
@@ -133,13 +137,15 @@ int osState = SPRITE_MANAGER;
 void (*drawFuncs[])(void) = {&drawSpriteMaker, 
                              &drawSpriteManager, 
                              &drawEngine,
-                             &drawKeyboard};
+                             &drawKeyboard,
+                             &drawMapMaker};
 
 // functions that get called every loop for each OS State
 void (*runFuncs[])(void) = {&runSpriteMaker, 
                             &runSpriteManager, 
                             &runEngine,
-                            &runKeyboard};
+                            &runKeyboard,
+                            &runMapMaker};
 
 /* 
  *  #########################################################################
@@ -287,14 +293,25 @@ void setup(void) {
   tft.setRotation(1);
   //[8][6][4];
   maps = malloc(sizeof(byte) * 8 * 6 * 4);
-  for (int i = 0; i < 20; i++){
-    for (int j = 0; j < 15; j++){
+  for (int i = 0; i < 8; i++){
+    for (int j = 0; j < 6; j++){
       for (int k = 0; k < 4; k ++){
         //maps[i][j][k] = 0;
         setMaps(i, j, k, 0);
       }
     }
   }
+
+  sprites = malloc(sizeof(byte) * 8 * 8 * numSprites);
+  for (int i = 0; i < numSprites; i++){
+    for (int j = 0; j < 8; j++){
+      for (int k = 0; k < 8; k++){
+        setSprites(i, j, k, 10);
+      }
+    }
+  }
+
+  
   programStack = new vector<int>();
 
   pushToState(osState);
@@ -435,8 +452,8 @@ void drawSprite(int x, int y, int spriteN){
   int squareP = spriteTileW / 8;
   for (int j = 0; j < 8; j++){
     for (int i = 0; i < 8; i++){
-      if (colors[sprites[spriteN][i][j]] != TRANSPARENT){
-        tft.fillRect(x + i * squareP, y + j * squareP, squareP, squareP, colors[sprites[spriteN][i][j]]);
+      if (colors[getFromSprites(spriteN, i, j)] != TRANSPARENT){
+        tft.fillRect(x + i * squareP, y + j * squareP, squareP, squareP, colors[getFromSprites(spriteN, i, j)]);
       }
     }
   }
@@ -446,7 +463,9 @@ void drawSprite(int x, int y, int spriteN){
 void drawSpriteWithRes(int x, int y, int spriteN, int res){
   for (int j = 0; j < 8; j++){
     for (int i = 0; i < 8; i++){
-      tft.fillRect(x + i * res, y + j * res, res, res, colors[sprites[spriteN][i][j]]);
+      if (colors[getFromSprites(spriteN, i, j)] != TRANSPARENT){ //sprites[spriteN][i][j]
+        tft.fillRect(x + i * res, y + j * res, res, res, colors[getFromSprites(spriteN, i, j)]);
+      }
     }
   }
 }
@@ -457,8 +476,8 @@ void drawSpriteWithRes(int x, int y, int spriteN, int res){
 
 void drawMap(int x, int y, int mapID, int res){
   int spriteDim = res * 8;
-  for (int j = 0; j < 15; j++){
-    for (int i = 0; i < 20; i++){
+  for (int j = 0; j < 6; j++){
+    for (int i = 0; i < 8; i++){
       drawSpriteWithRes(x + spriteDim * i, y + spriteDim * j, getFromMaps(i, j, mapID), res);//maps[i][j][mapID], res);
     }
   }
@@ -471,5 +490,13 @@ byte getFromMaps(int x, int y, int z){
 
 void setMaps(int x, int y, int z, byte num){
   maps[6*4*x + 4*y + z] = num;
+}
+
+byte getFromSprites(int x, int y, int z){
+  return sprites[8*8*x + 8*y + z];
+}
+
+void setSprites(int x, int y, int z, byte num){
+  sprites[8*8*x + 8*y + z] = num;
 }
 

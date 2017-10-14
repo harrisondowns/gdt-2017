@@ -5,7 +5,7 @@
 
 
 void drawEngine(void){
- // tft.fillScreen(GREEN);
+  tft.fillScreen(GREEN);
   //drawSprite(50, 50, 0);
   drawMap(0, 0, 0, standardMapRes);
 }
