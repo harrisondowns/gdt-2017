@@ -102,9 +102,9 @@ void pointa_pointb(TSPoint b){
       else if (blockx1 > blockx2) {
         blockx2 = blockx2 + 1;
         if(check_collision(blockx2, blocky2)) {
+          blockx2--;
           tft.fillRect(player_x, player_y, 40, 40, GREEN);
           draw_character(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8));
-          blockx2--;
           return;
         }
       }
@@ -127,9 +127,9 @@ void pointa_pointb(TSPoint b){
       else if (blocky1 > blocky2) {
         blocky2 = blocky2 + 1;
         if(check_collision(blockx2, blocky2)) {
+          blocky2--;
           tft.fillRect(player_x, player_y, 40, 40, GREEN);
           draw_character(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8));
-          blocky2--;
           return;
         }
       }

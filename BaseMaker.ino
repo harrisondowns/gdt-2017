@@ -53,15 +53,17 @@ void selectTilePalette(int ind){
 }
 
 void changeToEventMode(int rip){
-  if (isNewTouch()){
+ /* if (isNewTouch()){
     if (isEventMode == false){
       isEventMode = true;
     }
     else{
       isEventMode = false;
     }
-  }
-}
+  }*/
+  pushToState(BASE_ENGINE);
+} 
+
 
 
 
