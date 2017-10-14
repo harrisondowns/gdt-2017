@@ -461,12 +461,7 @@ void popState(int rip){
  *                par - the variable to pass in to callFunc when it gets called.
   */
 Button* makeButton(int x, int y, int w, int h, unsigned background, unsigned frame, unsigned textColor, char* text, void (*callFunc)(int x), int par){
-  Serial.print("ABOUT TO MALLOC\n");
   Button *newBut = malloc(sizeof(Button));
-  if (newBut == NULL) {
-    Serial.print("BAD MALLOC\n");
-  }
-  Serial.print("GOOD MALLOC\n");
   newBut->x = x;
   newBut->y = y;
   newBut->w = w;
@@ -515,7 +510,6 @@ void drawButton(Button* but){
   tft.setTextColor(but->textColor);
   tft.setTextSize(1);
   tft.println(but->text);
-  Serial.print("BUTTON DRAWN\n");
 }
 
 void drawText(int x, int y, int size, char *text, unsigned color){
