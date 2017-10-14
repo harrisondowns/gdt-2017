@@ -1,13 +1,15 @@
 const int tileBoxS = 24;
 const int tileBoxRes = tileBoxS / 8;
 
+bool isEventMode = false;
+
 unsigned backcol = GREEN;
 int currentTileSelected = 15;
 
 void drawMapMaker(void){
  //tft.fillScreen(GREEN);
   //drawSprite(50, 50, 0);
-  fillRect(0, 0, 64, 239, BLACK);
+  fillRect(0, 0, 64, 240, BLACK);
   fillRect(64, 192, 319, 240, BLACK);
   fillRect(64, 0, 8 * 4 * 8, 6 * 4 * 8, backcol);
   drawMap(64, 0, currentMap, 4);
@@ -39,7 +41,10 @@ void drawMapMaker(void){
 
   tft.drawLine(0, 0, 0, 8 * tileBoxS, WHITE);
   tft.drawLine(tileBoxS * 2, 0, tileBoxS * 2, 8 * tileBoxS, WHITE);
-   tft.drawLine(tileBoxS, 0, tileBoxS, 8 * tileBoxS, WHITE);
+  tft.drawLine(tileBoxS, 0, tileBoxS, 8 * tileBoxS, WHITE);
+
+  Button *b = makeButton(70, 200, 60, 36, LIGHTGRAY, DARKGRAY, BLACK, "EVENTS", changeToEventMode, 0);
+  drawButton(b);
 
 }
 
@@ -47,22 +52,40 @@ void selectTilePalette(int ind){
   currentTileSelected = ind;
 }
 
+void changeToEventMode(int rip){
+  if (isNewTouch()){
+    if (isEventMode == false){
+      isEventMode = true;
+    }
+    else{
+      isEventMode = false;
+    }
+  }
+}
+
+
 
 
 void placeMapTile(int coord){
   int x = coord % 8;
   int y = coord / 8;
   int z = currentMap;
-  if (getFromMaps(x, y, z) != currentTileSelected){
-   if (currentTileSelected != 15){
-    setMaps(x, y, z, currentTileSelected);
-    fillRect(64 + x * 32, y * 32, 32, 32, backcol);
-    drawSpriteWithRes(64 + x * 32, y * 32, currentTileSelected, 4);
-   }
-   else{
-    setMaps(x, y, z, currentTileSelected);
-    fillRect(64 + x * 32, y * 32, 32, 32, backcol);
-   }
+  if (isEventMode == false){
+    if (getFromMaps(x, y, z) != currentTileSelected){
+     if (currentTileSelected != 15){
+      setMaps(x, y, z, currentTileSelected);
+      fillRect(64 + x * 32, y * 32, 32, 32, backcol);
+      drawSpriteWithRes(64 + x * 32, y * 32, currentTileSelected, 4);
+     }
+     else{
+      setMaps(x, y, z, currentTileSelected);
+      fillRect(64 + x * 32, y * 32, 32, 32, backcol);
+     }
+    }
+  }
+  else{
+    curEvent = eventOf(x, y, z);
+    pushToState(BASE_EVENT);
   }
 }
 
