@@ -3,7 +3,7 @@ const int tileBoxRes = tileBoxS / 8;
 
 bool isEventMode = false;
 
-unsigned backcol = GREEN;
+unsigned backcol = currentBackground;
 int currentTileSelected = 15;
 
 void drawMapMaker(void){
@@ -11,7 +11,7 @@ void drawMapMaker(void){
   //drawSprite(50, 50, 0);
   fillRect(0, 0, 64, 240, BLACK);
   fillRect(64, 192, 319, 240, BLACK);
-  fillRect(64, 0, 8 * 4 * 8, 6 * 4 * 8, backcol);
+  fillRect(64, 0, 8 * 4 * 8, 6 * 4 * 8, currentBackground);
   drawMap(64, 0, currentMap, 4);
 
   for (int j = 0; j < 6; j++){
@@ -44,20 +44,42 @@ void drawMapMaker(void){
   tft.drawLine(tileBoxS, 0, tileBoxS, 8 * tileBoxS, WHITE);
 
   Button *b = makeButton(70, 200, 60, 36, LIGHTGRAY, DARKGRAY, BLACK, "EVENTS", changeToEventMode, 0);
+  Button *c = makeButton(220, 200, 70, 36, LIGHTGRAY, DARKGRAY, BLACK, "BG COLOR", changeToBackgroundColor, 0);
   drawButton(b);
+  drawButton(c);
+
+  drawButton(makeButton(5, 200, 60, 36, LIGHTGRAY, WHITE, BLACK, "SPRITES", changeToSpriteManager, 0));
 
 }
 
+void changeToBackgroundColor(int rip){
+  pushToState(BG_COLOR);
+}
+
+void changeToSpriteManager(int rip){
+  pushToState(SPRITE_MANAGER);
+}
+
 void selectTilePalette(int ind){
-  currentTileSelected = ind;
+  if (currentTileSelected != ind){
+    drawRect(currentTileSelected / 8 * 24, currentTileSelected % 8 * 24, 25, 25, WHITE);
+    currentTileSelected = ind;
+    drawRect(currentTileSelected / 8 * 24, currentTileSelected % 8 * 24, 25, 25, RED);
+  }
+  else{
+    currentTileSelected = ind;
+  }
+  
 }
 
 void changeToEventMode(int rip){
  /* if (isNewTouch()){
     if (isEventMode == false){
+      drawRect(69, 199, 61, 37, RED);
       isEventMode = true;
     }
     else{
+      drawRect(69, 199, 61, 37, WHITE);
       isEventMode = false;
     }
   }*/
@@ -76,12 +98,12 @@ void placeMapTile(int coord){
     if (getFromMaps(x, y, z) != currentTileSelected){
      if (currentTileSelected != 15){
       setMaps(x, y, z, currentTileSelected);
-      fillRect(64 + x * 32, y * 32, 32, 32, backcol);
+      fillRect(64 + x * 32, y * 32, 32, 32, currentBackground);
       drawSpriteWithRes(64 + x * 32, y * 32, currentTileSelected, 4);
      }
      else{
       setMaps(x, y, z, currentTileSelected);
-      fillRect(64 + x * 32, y * 32, 32, 32, backcol);
+      fillRect(64 + x * 32, y * 32, 32, 32, currentBackground);
      }
     }
   }

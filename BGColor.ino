@@ -1,20 +1,14 @@
-/*  
- *  SpriteManager.ino - runs the sprite manager, the screen that allows a user
- *  to select a specific sprite to edit using the SpriteMaker.
-*/
-
-// UI Vars
 #define spriteSpacingW 64
 #define spriteTileBaseX 8
 #define spriteTileBaseY 60
 
-void drawSpriteManager(void){
+void drawBGColor(void){
   
   tft.fillScreen(LIGHTGRAY);
   tft.setCursor(60, 5);
   tft.setTextColor(BLACK);  
-  tft.setTextSize(3);
-  tft.println("Sprite Manager");
+  tft.setTextSize(2);
+  tft.println("Background Color");
 
   for (int i = 0; i < numSprites; i++){
       int x = (i % 5) * spriteSpacingW + spriteTileBaseX - 1;
@@ -24,25 +18,25 @@ void drawSpriteManager(void){
 
       
      // tft.fillRect(sbX + x * sbS + 1, sbY + y * sbS + 1, sbS - 1, sbS - 1, colors[sprites[currentSprite][x][y]]);
-      Button *b = makeButton(x, y, w, h, BLACK, WHITE, BLACK, sprintf("%d", i), clickSprite, i);
+      Button *b = makeButton(x, y, w, h, colors[i], WHITE, BLACK, "", selectColor, i);
       drawButton(b);
-      drawSprite(x, y, i);
+//      drawSprite(x, y, i);
 
   }
   delay(1);
   drawButton(makeButton(5, 5, 40, 40, BLUE, WHITE, WHITE, "EXIT", popState, 0));
 }
 
-void clickSprite(int i){
-  currentSprite = i;
-  pushToState(SPRITE_MAKER);
+void selectColor(int i){
+  currentBackground = colors[i];
+  popState(0);
   
 }
 
 
 
 
-void runSpriteManager(void){
+void runBGColor(void){
   TSPoint p = getTouchPoint();
   if (p.z == 500){
     int a = 0;
@@ -63,5 +57,4 @@ void runSpriteManager(void){
   }
   
 }
-
 

@@ -87,7 +87,7 @@ void drawSpriteMaker(void){
 
     }
   }
-  Serial.println("EXIT S"); // don't delete this serial line, it holds the exit button together
+//  Serial.println("EXIT S\n\n\n\n\n"); // don't delete this serial line, it holds the exit button together
   Button *back = makeButton(saveX, saveY, saveW, saveW, BLUE, WHITE, WHITE, exitS, popState, 0);
   drawButton(back);
   tft.setCursor(100, 10);
@@ -117,14 +117,20 @@ void runSpriteMaker(void){
   if (p.z == 500){
     if (p.x < BOXSIZE) {
          oldcolor = currentcolor;
+         if (p.y / 30 != colorInd)
+          drawRect((colorInd / 8) * 30, (colorInd % 8) * 30, 31, 31, WHITE);
+         
          currentcolor = colors[p.y / 30];
          colorInd = (p.y / 30);
-         
+         drawRect((colorInd / 8) * 30, (colorInd % 8) * 30, 31, 31, RED);
      }
      else if (p.x < BOXSIZE * 2){
+        if (p.y / 30 + 8!= colorInd)
+          drawRect((colorInd / 8) * 30, (colorInd % 8) * 30, 31, 31, WHITE);
         oldcolor = currentcolor;
         colorInd = (p.y / 30) + 8;
         currentcolor = colors[(p.y / 30) + 8];
+        drawRect((colorInd / 8) * 30, (colorInd % 8) * 30, 31, 31, RED);
      }
   
   // if selecting a square on board
