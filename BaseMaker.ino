@@ -76,7 +76,7 @@ void selectTilePalette(int ind){
 }
 
 void changeToEventMode(int rip){
-  if (isNewTouch()){
+ /* if (isNewTouch()){
     if (isEventMode == false){
       drawRect(69, 199, 62, 38, RED);
       isEventMode = true;
@@ -99,8 +99,10 @@ void changeToEventMode(int rip){
         }
       }
     }
-  }
-}
+  }*/
+  pushToState(BASE_ENGINE);
+} 
+
 
 
 
@@ -142,3 +144,4 @@ void runMapMaker(void){
     
   }
 }
+
