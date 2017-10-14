@@ -62,6 +62,7 @@ struct Button {
   int p;
 };
 
+
 const unsigned colors[16] = {BLACK, DARKGRAY, RED, YELLOW, GOLD, GREEN, CYAN, MAGENTA, 
                        WHITE, LIGHTGRAY, TRANSPARENT, ORANGE, BROWN, DARKGREEN, BLUE, PALE};
 #define numSprites 15
@@ -125,6 +126,7 @@ int framesSinceTouch = 0;
 #define BASE_ENGINE 2    // base game play
 #define KEYBOARD_INPUT 3
 #define BASE_MAKER 4 //map editor
+#define BASE_EVENT 5 //event maker
 
 // dynamic array of OSState used in popState() and pushToState()
 vector<int>* programStack;
@@ -140,14 +142,16 @@ void (*drawFuncs[])(void) = {&drawSpriteMaker,
                              &drawSpriteManager, 
                              &drawEngine,
                              &drawKeyboard,
-                             &drawMapMaker};
+                             &drawMapMaker,
+                             &drawEventMaker};
 
 // functions that get called every loop for each OS State
 void (*runFuncs[])(void) = {&runSpriteMaker, 
                             &runSpriteManager, 
                             &runEngine,
                             &runKeyboard,
-                            &runMapMaker};
+                            &runMapMaker,
+                            &runEventMaker};
 
 /* 
  *  #########################################################################
@@ -156,6 +160,8 @@ void (*runFuncs[])(void) = {&runSpriteMaker,
  *  ###                                                                   ###
  *  #########################################################################
 */
+
+int tempA = 0;
 
 // state variable passed between Sprite Manager and Sprite Maker
 int currentSprite = 0;
@@ -169,6 +175,34 @@ byte *maps;;//[8][6][4];
 
 int standardMapRes = 5;
 int currentMap = 0;
+
+
+
+// event struct
+struct Event{
+  byte op;
+  byte next;
+  void *val;
+};
+
+struct TileEvent{
+  byte x;
+  byte y;
+  byte mapInd;
+  vector<Event> *events;
+};
+vector<Event> *curEvent;
+vector<TileEvent> *tileEvents;
+
+byte vars[16];
+
+// event opcodes
+#define SAYTEXT 0
+#define SETVAR 1
+#define IFCOND 2
+#define TRANSFER 3
+
+
 
 /* 
  *  #########################################################################
@@ -247,7 +281,7 @@ bool isNewTouch(){
   */
 void setup(void) {
 
-
+  tileEvents = new vector<TileEvent>();
   buttons = new vector<Button*>();
 
   Serial.begin(9600);
@@ -494,7 +528,7 @@ void drawMap(int x, int y, int mapID, int res){
   }
 }
 
-
+/* array grab functions */
 byte getFromMaps(int x, int y, int z){
   return maps[6*4*x + 4*y + z];
 }
@@ -509,5 +543,29 @@ byte getFromSprites(int x, int y, int z){
 
 void setSprites(int x, int y, int z, byte num){
   sprites[8*8*x + 8*y + z] = num;
+}
+
+vector<Event>* eventOf(int x, int y, int z){
+  for (int i = 0; i < tileEvents->size(); i++){
+    TileEvent e = tileEvents->at(i);
+    if (e.x == x && e.y == y && e.mapInd == z){
+      return e.events;
+    }
+  }
+  TileEvent te;
+  te.x = x;
+  te.y = y;
+  te.mapInd = z;
+  te.events = new vector<Event>();
+  tileEvents->push_back(te);
+  return te.events;
+}
+
+byte unpackOPCode(struct Event e){
+  return e.op >> 4;
+}
+
+byte packOPCode (byte op){
+  return op << 4;
 }
 

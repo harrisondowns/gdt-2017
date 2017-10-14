@@ -87,7 +87,7 @@ void drawSpriteMaker(void){
 
     }
   }
-  Serial.println("EXIT S");
+  Serial.println("EXIT S"); // don't delete this serial line, it holds the exit button together
   Button *back = makeButton(saveX, saveY, saveW, saveW, BLUE, WHITE, WHITE, exitS, popState, 0);
   drawButton(back);
   tft.setCursor(100, 10);
