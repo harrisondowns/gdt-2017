@@ -43,21 +43,37 @@ void drawMapMaker(void){
   tft.drawLine(tileBoxS * 2, 0, tileBoxS * 2, 8 * tileBoxS, WHITE);
   tft.drawLine(tileBoxS, 0, tileBoxS, 8 * tileBoxS, WHITE);
 
-  Button *b = makeButton(70, 200, 60, 36, LIGHTGRAY, DARKGRAY, BLACK, "EVENTS", changeToEventMode, 0);
+  Button *b = makeButton(70, 200, 60, 36, LIGHTGRAY, WHITE, BLACK, "EVENTS", changeToEventMode, 0);
   drawButton(b);
+
+  drawButton(makeButton(5, 200, 60, 36, LIGHTGRAY, WHITE, BLACK, "SPRITES", changeToSpriteManager, 0);
 
 }
 
+void changeToSpriteManager(int rip){
+  pushToState(SPRITE_MANAGER);
+}
+
 void selectTilePalette(int ind){
-  currentTileSelected = ind;
+  if (currentTileSelected != ind){
+    drawRect(currentTileSelected / 8 * 24, currentTileSelected % 8 * 24, 25, 25, WHITE);
+    currentTileSelected = ind;
+    drawRect(currentTileSelected / 8 * 24, currentTileSelected % 8 * 24, 25, 25, RED);
+  }
+  else{
+    currentTileSelected = ind;
+  }
+  
 }
 
 void changeToEventMode(int rip){
   if (isNewTouch()){
     if (isEventMode == false){
+      drawRect(69, 199, 61, 37, RED);
       isEventMode = true;
     }
     else{
+      drawRect(69, 199, 61, 37, WHITE);
       isEventMode = false;
     }
   }

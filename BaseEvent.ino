@@ -47,7 +47,11 @@ void drawEventMaker(void){
 }
 
 void selectOPCode(int opCode){
-  curEType = opCode;
+  if (curEType != opCode){
+    drawRect(9, 9 + COMMHEIGHT * curEType, 61, 21, WHITE);
+    curEType = opCode;
+    drawRect(9, 9 + COMMHEIGHT * curEType, 61, 21, RED);
+  }
 }
 
 void lol(int rip){
@@ -82,7 +86,7 @@ void renderEventTree(){
   
   int y = 10;
   fillRect(BASE_X_OFF, y, 120, curEvent->size() * 40, LIGHTGRAY);
-
+  
   
   int xOff = BASE_X_OFF;
   for (int i = 0; i < curEvent->size(); i++){
@@ -98,7 +102,7 @@ void renderEventTree(){
       
       char dest[tempA + 1];
 
-      strncpy(dest, (char*)e.val,tempA);
+      strncpy(dest, (char*)e.val, tempA);
 
       if (tempA == 15){
         for (int j = 1; j <= 3; j++){
@@ -122,7 +126,7 @@ void renderEventTree(){
         str[5] = 0;
       } 
 
-      drawText(xOff + 5, y + 20, 1, str, WHITE);
+      drawText(BASE_X_OFF + 5, y + 20, 1, str, WHITE);
     }
     
     
@@ -132,7 +136,7 @@ void renderEventTree(){
     }*/
     y += EVENT_Y_SIZE;
   }
-  drawButton(makeButton(100, y, 100, 40, WHITE, LIGHTGRAY, WHITE, "", placeEvent, curEvent->size())); 
+  drawButton(makeButton(xOff, y, 100, 40, WHITE, BLACK, WHITE, "", placeEvent, curEvent->size())); 
 }
 
 void testSame(int u){
@@ -145,9 +149,14 @@ void placeEvent(int ind){
     e.op = packOPCode(curEType);
 
     if (curEType == 0){
-      e.val = malloc(sizeof(byte));
+    //  e.val = 0;//malloc(sizeof(byte));
       e.val = 0;
-   }
+    }
+    if (curEType == 1){
+      e.val = 0;
+      
+    }
+   
   
     curEvent->insert(ind, e);
     renderEventTree();
