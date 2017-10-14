@@ -4,7 +4,6 @@
  *  itself. Variables and functionsthat need to passed or used between program states must 
  *  be declared here in order to be used.
 */
-/* comment */
 
 #include <StandardCplusplus.h>
 #include <system_configuration.h>
@@ -126,6 +125,8 @@ int framesSinceTouch = 0;
 #define KEYBOARD_INPUT 3
 #define BASE_MAKER 4 //map editor
 #define BASE_EVENT 5 //event maker
+#define SELECT_VAR 6 // selecting a variable for events
+#define SET_VAR 7 // set var value
 
 // dynamic array of OSState used in popState() and pushToState()
 vector<int>* programStack;
@@ -142,7 +143,9 @@ void (*drawFuncs[])(void) = {&drawSpriteMaker,
                              &drawEngine,
                              &drawKeyboard,
                              &drawMapMaker,
-                             &drawEventMaker};
+                             &drawEventMaker,
+                             &drawSelectVar,
+                             &drawSetVar};
 
 // functions that get called every loop for each OS State
 void (*runFuncs[])(void) = {&runSpriteMaker, 
@@ -150,7 +153,9 @@ void (*runFuncs[])(void) = {&runSpriteMaker,
                             &runEngine,
                             &runKeyboard,
                             &runMapMaker,
-                            &runEventMaker};
+                            &runEventMaker,
+                            &runSelectVar,
+                            &runSetVar};
 
 /* 
  *  #########################################################################
@@ -196,6 +201,9 @@ vector<Event> *curEvent;
 vector<TileEvent> *tileEvents;
 
 byte vars[16];
+
+byte selectedVar = 0;
+
 
 // event opcodes
 #define SAYTEXT 0
@@ -470,7 +478,7 @@ void drawButton(Button* but){
   tft.setCursor(but->x + 3, but->y + 3);
   tft.setTextColor(but->textColor);
   tft.setTextSize(1);
-  Serial.println(but->text);
+//  Serial.println(but->text);
   tft.println(but->text);
 }
 
@@ -563,4 +571,9 @@ byte unpackOPCode(struct Event e){
 byte packOPCode (byte op){
   return op << 4;
 }
+
+byte unpackOperand(struct Event e){
+  return e.op & 15;
+}
+
 
