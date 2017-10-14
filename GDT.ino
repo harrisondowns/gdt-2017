@@ -17,7 +17,6 @@
 #include <TouchScreen.h>   // touch screen library
 
 using namespace std;
-
 /* 
  *  #########################################################################
  *  ###                                                                   ###
@@ -252,7 +251,7 @@ TSPoint getTouchPoint(){
   digitalWrite(13, HIGH);
   TSPoint p = ts.getPoint();
   digitalWrite(13, LOW);
-
+  pinMode(23, INPUT);
   pinMode(XM, OUTPUT);
   pinMode(YP, OUTPUT);
 
@@ -569,6 +568,17 @@ vector<Event>* eventOf(int x, int y, int z){
   tileEvents->push_back(te);
   return te.events;
 }
+
+vector<Event>* find_event(int x, int y, int z){
+  for (int i = 0; i < tileEvents->size(); i++){
+    TileEvent e = tileEvents->at(i);
+    if (e.x == x && e.y == y && e.mapInd == z){
+      return e.events;
+    }
+  }
+  return NULL;
+}
+
 
 byte unpackOPCode(struct Event e){
   return e.op >> 4;

@@ -48,10 +48,16 @@ void drawMapMaker(void){
 
   drawButton(makeButton(5, 200, 60, 36, LIGHTGRAY, WHITE, BLACK, "SPRITES", changeToSpriteManager, 0));
 
+  drawButton(makeButton(135, 200, 60, 36, LIGHTGRAY, WHITE, BLACK, "PLAY", play, 0));
+
 }
 
 void changeToSpriteManager(int rip){
   pushToState(SPRITE_MANAGER);
+}
+
+void play(int rip) {
+  pushToState(BASE_ENGINE);
 }
 
 void selectTilePalette(int ind){
@@ -67,7 +73,7 @@ void selectTilePalette(int ind){
 }
 
 void changeToEventMode(int rip){
- /* if (isNewTouch()){
+  if (isNewTouch()){
     if (isEventMode == false){
       drawRect(69, 199, 61, 37, RED);
       isEventMode = true;
@@ -76,8 +82,7 @@ void changeToEventMode(int rip){
       drawRect(69, 199, 61, 37, WHITE);
       isEventMode = false;
     }
-  }*/
-  pushToState(BASE_ENGINE);
+  }
 } 
 
 
