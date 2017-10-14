@@ -6,6 +6,7 @@
 int player_x;
 int player_y;
 bool is_running;
+bool moving = false;
 
 void drawEngine(void){
   tft.fillScreen(GREEN);
@@ -44,18 +45,34 @@ void draw_character(int x, int y)
   player_y = corn_y;
 }
 
-void draw_character(int x, int y)
-
 
 TSPoint match_grid(TSPoint ot){
-  ot.x = (x / (standardMapRes * 8)) * (standardMapRes * 8);
-  ot.y = (y / (standardMapRes * 8)) * (standardMapRES * 8);
+  ot.x = (ot.x / (standardMapRes * 8)) * (standardMapRes * 8);
+  ot.y = (ot.y / (standardMapRes * 8)) * (standardMapRes * 8);
 
   return ot;
 }
 
-void pointa-pointb(TSPoint b){
-  (while player_x != b.x){
+
+//getfrommaps function maps[15] is valid movable terrain
+//bool check_collision(
+//  if (getFromMaps(player_x, player_y, 0) != 15){
+  
+///  }
+//millis retunrns a long since the start of the program
+
+
+void movement(){
+  if(moving){
+    if(TimeSinceLastLoop > 250){
+      
+      }
+  }
+}
+
+ 
+void pointa_pointb(TSPoint b){
+  while (player_x != b.x){
       if (player_x < b.x){
         player_x = player_x + (standardMapRes * 8);
       }
@@ -64,7 +81,7 @@ void pointa-pointb(TSPoint b){
       }
       draw_character(player_x, player_y);
   }
-  (while player_y != b.y){
+  while (player_y != b.y){
      if (player_y < b.y){
         player_y = player_y + (standardMapRes * 8);
       }
