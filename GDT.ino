@@ -1,3 +1,5 @@
+/* run-game branch */
+
 /*  
  *  GDT.ino - this file is the core of the program. It contains functions and variables
  *  pertaining to Backbone, the underlying graphics and OS functions that run the program 
@@ -319,13 +321,21 @@ void setup(void) {
  
 }
 
+/*
+ * variables to keep track of time  
+ */
+long TimeSinceLastLoop = 0;
+long delta = 0;
+
 /* loop() - Arduino's required "loop()" function that actually runs the project. Calls
  *          a corresponding run function depending on the current state of the OS. No
  *          run functions are allowed to block the OS, i.e. no infinite loops inside.
   */
 void loop(void) {
-
+  
+  delta = millis() - timeSinceLastLoop;
   runFuncs[osState]();
+  TimeSinceLastLoop += delta;
  
 } 
 
