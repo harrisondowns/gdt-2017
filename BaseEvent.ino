@@ -59,13 +59,16 @@ void lol(int rip){
 }
 
 void exitEvent(int rip){
-  Serial.println("Ayo");
-  Serial.println("Stack:");
-  for (int i = 0; i < programStack->size(); i++){
-   
-    Serial.println(programStack->at(i));
+
+  if (isNewTouch()){
+    Serial.println("Ayo");
+    Serial.println("Stack:");
+    for (int i = 0; i < programStack->size(); i++){
+     
+      Serial.println(programStack->at(i));
+    }
+    popState(0);
   }
-  popState(0);
 }
 
 void clearEButtons(){
@@ -74,6 +77,8 @@ void clearEButtons(){
 
     Button *b = buttons->at(i);
     if (b->callFunc != &selectOPCode && b->callFunc != &exitEvent){
+      Serial.print("REMOVING ");
+      Serial.println(i);
       buttons->erase(buttons->begin() + i);
       x++;
     }
@@ -171,6 +176,8 @@ void runEventMaker(void){
     for (int i = 0; i < buttons->size(); i++){
       Button *b = buttons->at(i);
       if (p.x >= b->x && p.x < b->x + b->w && p.y >= b->y && p.y < b->y + b->h){
+        Serial.print("we got a trigger on ");
+        Serial.println(i);
         b->callFunc(b->p);
         break;
       }

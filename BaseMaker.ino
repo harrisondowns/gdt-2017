@@ -46,7 +46,7 @@ void drawMapMaker(void){
   Button *b = makeButton(70, 200, 60, 36, LIGHTGRAY, WHITE, BLACK, "EVENTS", changeToEventMode, 0);
   drawButton(b);
 
-  drawButton(makeButton(5, 200, 60, 36, LIGHTGRAY, WHITE, BLACK, "SPRITES", changeToSpriteManager, 0);
+  drawButton(makeButton(5, 200, 60, 36, LIGHTGRAY, WHITE, BLACK, "SPRITES", changeToSpriteManager, 0));
 
 }
 

@@ -11,7 +11,7 @@
 void drawSpriteManager(void){
   
   tft.fillScreen(LIGHTGRAY);
-  tft.setCursor(40, 5);
+  tft.setCursor(60, 5);
   tft.setTextColor(BLACK);  
   tft.setTextSize(3);
   tft.println("Sprite Manager");
@@ -29,7 +29,8 @@ void drawSpriteManager(void){
       drawSprite(x, y, i);
 
   }
-  
+  delay(1);
+  drawButton(makeButton(5, 5, 40, 40, BLUE, WHITE, WHITE, "EXIT", popState, 0));
 }
 
 void clickSprite(int i){
@@ -37,6 +38,9 @@ void clickSprite(int i){
   pushToState(SPRITE_MAKER);
   
 }
+
+
+
 
 void runSpriteManager(void){
   TSPoint p = getTouchPoint();
@@ -50,11 +54,11 @@ void runSpriteManager(void){
         break;
       }
     }
-    if (a == 0){
+    /*if (a == 0){
      // setKeyboardMaxLength(40);
      // pushToState(KEYBOARD_INPUT);
      pushToState(BASE_MAKER);
-    }
+    }*/
  
   }
   

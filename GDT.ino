@@ -135,7 +135,7 @@ vector<int>* programStack;
 vector<Button*>* buttons;
 
 // osState: current screen of the OS
-int osState = SPRITE_MANAGER;
+int osState = BASE_MAKER;
 
 // functions that draw each OS State
 void (*drawFuncs[])(void) = {&drawSpriteMaker, 
@@ -383,11 +383,12 @@ void loop(void) {
   */
 void pushToState(int state){
   clearButtons();
+  Serial.println("Stack: Begin");
   for (int i = 0; i < programStack->size(); i++){
-    Serial.println("Stack:");
+    
     Serial.println(programStack->at(i));
   }
-  
+  Serial.println("ENDSTACK");
   programStack->push_back(state);
   drawFuncs[state]();
   osState = state;
