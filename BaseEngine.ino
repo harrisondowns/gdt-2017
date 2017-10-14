@@ -3,6 +3,7 @@
  *  or playtesting the game, this OS State will be used.
 */
 
+bool is_text = false;
 int player_x = 159;
 int player_y = 119;
 bool is_running;
@@ -10,6 +11,8 @@ int target_x;
 int target_y;
 int TimeSinceLastMove = 0;
 bool moving = false;
+int txt_box_w = 320;
+int txt_box_h = 59;
 
 
 void drawEngine(void){
@@ -17,6 +20,7 @@ void drawEngine(void){
   drawMap(0, 0, 0, standardMapRes);
   position_player();
   draw_character(player_x, player_y);
+  make_text_box("This is a text box!!");
   //drawSprite(50, 50, 0);
 
   
@@ -58,6 +62,13 @@ void move_character(void)
   TimeSinceLastMove += delta;
   TSPoint p = getTouchPoint();
   if ( p.z == 500) {
+    if (is_text) {
+      Serial.print("REMOVE BOX");
+      is_text = false;
+      tft.fillRect(0, 240 - txt_box_h - 1, txt_box_w, txt_box_h + 1, GREEN);
+      drawMap(0, 0, currentMap, standardMapRes);
+      return;
+    }
     Serial.print("FOUND NEW MOVE\n");
     moving = true;
     target_x = p.x;
@@ -239,5 +250,13 @@ void movement(){
     }
   }
 }
+
+void make_text_box(char *text)
+{
+  is_text = true;
+  tft.fillRect(0, 240 - txt_box_h, txt_box_w, txt_box_h, BLACK);
+  tft.drawFastHLine(0, 240 - txt_box_h + 1, 320, LIGHTGRAY);
+  drawText(10, 240 - txt_box_h + 25 , 2, text, WHITE);
   
+}
 
