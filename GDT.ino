@@ -4,6 +4,7 @@
  *  itself. Variables and functionsthat need to passed or used between program states must 
  *  be declared here in order to be used.
 */
+/* comment */
 
 #include <StandardCplusplus.h>
 #include <system_configuration.h>
