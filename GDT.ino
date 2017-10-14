@@ -1,6 +1,4 @@
 /* run-game branch */
-/* Jimmy should see this */
-/* For Jason */
 
 /*  
  *  GDT.ino - this file is the core of the program. It contains functions and variables
