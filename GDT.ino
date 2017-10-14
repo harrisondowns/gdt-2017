@@ -412,15 +412,12 @@ void loop(void) {
 void pushToState(int state){
   Serial.println("pushToState");
   clearButtons();
-<<<<<<< HEAD
-=======
   Serial.println("Stack: Begin");
   for (int i = 0; i < programStack->size(); i++){
     
     Serial.println(programStack->at(i));
   }
   Serial.println("ENDSTACK");
->>>>>>> origin/run-game
   programStack->push_back(state);
   drawFuncs[state]();
   osState = state;
@@ -518,11 +515,6 @@ void drawButton(Button* but){
   tft.setCursor(but->x + 3, but->y + 3);
   tft.setTextColor(but->textColor);
   tft.setTextSize(1);
-<<<<<<< HEAD
-=======
-
-//  Serial.println(but->text);
->>>>>>> origin/run-game
   tft.println(but->text);
   Serial.print("BUTTON DRAWN\n");
 }
@@ -625,10 +617,6 @@ byte unpackOPCode(struct Event e){
 }
 
 byte packOPCode (byte op){
-<<<<<<< HEAD
-  
-=======
->>>>>>> origin/run-game
   return op << 4;
 }
 

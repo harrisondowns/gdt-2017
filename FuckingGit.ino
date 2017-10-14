@@ -251,7 +251,7 @@ void movement(){
     
     }
   }
-<<<<<<< HEAD:BaseEngine.ino
+
 }
 
 void make_text_box(char *text)
@@ -306,7 +306,5 @@ void setvar(Event curr_event)
   int var = (int) curr_event.val;
                                
 }
-=======
-}  
->>>>>>> origin/run-game:FuckingGit.ino
+
 

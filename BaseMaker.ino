@@ -53,7 +53,6 @@ void drawMapMaker(void){
 
   drawButton(makeButton(5, 200, 60, 36, LIGHTGRAY, WHITE, BLACK, "SPRITES", changeToSpriteManager, 0));
 
-<<<<<<< HEAD
   drawButton(makeButton(135, 200, 60, 36, LIGHTGRAY, WHITE, BLACK, "PLAY", play, 0));
 
   if (isEventMode == true){
@@ -66,7 +65,7 @@ void drawMapMaker(void){
         }
   }
 
-=======
+
 }
 
 void changeToMapSelect(int rip){
@@ -75,7 +74,7 @@ void changeToMapSelect(int rip){
 
 void changeToBackgroundColor(int rip){
   pushToState(BG_COLOR);
->>>>>>> origin/run-game
+
 }
 
 void changeToSpriteManager(int rip){
