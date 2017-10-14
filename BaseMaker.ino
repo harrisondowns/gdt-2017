@@ -6,9 +6,7 @@ void drawMapMaker(void){
 }
 
 
-<<<<<<< HEAD
-=======
 void runMapMaker(void){
   
 }
->>>>>>> master
+

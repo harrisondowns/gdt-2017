@@ -3,19 +3,24 @@
  *  or playtesting the game, this OS State will be used.
 */
 
+int player_x;
+int player_y;
+bool is_running;
 
 void drawEngine(void){
   tft.fillScreen(GREEN);
   //drawSprite(50, 50, 0);
-  drawMap(0, 0, 0, standardMapRes);
+  //drawMap(0, 0, 0, standardMapRes);
   
 }
 
 
 void runEngine(void){
-  for (int i = 0; i < 5; i++){
-    delay(250);
-    tft.fillRect(i * 48, 50, 48, 48, GREEN);
+  is_running = true;
+  while(is_running) {
+    delay(50);
+    move_character();
+
   }
   
 }
@@ -23,7 +28,20 @@ void runEngine(void){
 void move_character(void) 
 {
   TSPoint p = getTouchPoint();
-  draw_character(x, y);
+  if (isNewTouch() and p.x != player_x and p.y != player_y) {
+    tft.fillRect(player_x, player_y, 40, 40, GREEN);
+    draw_character(p.x, p.y);
+  }
+
+}
+
+void draw_character(int x, int y) 
+{
+  int corn_y = (y / (8 * standardMapRes)) *(8 * standardMapRes);
+  int corn_x = (x / (8 * standardMapRes)) *(8 * standardMapRes);
+  drawSpriteWithRes(corn_x, corn_y, 0, standardMapRes);
+  player_x = corn_x;
+  player_y = corn_y;
 }
 
 void draw_character(int x, int y)
@@ -56,4 +74,5 @@ void pointa-pointb(TSPoint b){
       draw_character(player_x, player_y);
   }
 }
+
 
