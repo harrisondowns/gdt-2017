@@ -13,6 +13,7 @@ bool grabStringFlag = false;
 bool grabVarFlag = false;
 
 
+
 int curEType = 0;
 
 void drawEventMaker(void){
@@ -27,7 +28,6 @@ void drawEventMaker(void){
   
   
   tft.fillScreen(LIGHTGRAY);
-  Serial.println("Ay");
   tempA = 10;
   drawButton(makeButton(10, tempA, 60, 20, DARKGRAY, WHITE, WHITE, "Say Text", selectOPCode, SAYTEXT));
   tempA += COMMHEIGHT;
@@ -73,16 +73,17 @@ void exitEvent(int rip){
 
 void clearEButtons(){
   int x = 0;
-  for (int i = buttons->size() - 1; i >= 0; i--){
+  for (int i = buttons->size() - 1; i >= 5; i--){
 
     Button *b = buttons->at(i);
-    if (b->callFunc != &selectOPCode && b->callFunc != &exitEvent){
-      Serial.print("REMOVING ");
-      Serial.println(i);
+    if (b->callFunc != selectOPCode && b->callFunc != exitEvent){
       buttons->erase(buttons->begin() + i);
       x++;
+  
     }
   }
+
+  
 
 }
 
@@ -119,19 +120,29 @@ void renderEventTree(){
     }
     else if (eType == 1){
 
-      char *str = "Var 0 ";
+      // = "Var 0 ";
+      char str[7];
+      str[0] = 'V';
+      str[1] = 'a';
+      str[2] = 'r';
+      str[3] = ' ';
       
       byte oper = unpackOperand(e);
+      
       if (oper >= 10){
         str[4] = '1';
-        str[5] = oper - 10 + '0';
+        str[5] = (oper - 10) + '0';
       }
       else{
         str[4] = oper + '0';
         str[5] = 0;
       } 
+      str[6] = 0;
 
+      
       drawText(BASE_X_OFF + 5, y + 20, 1, str, WHITE);
+      
+      
     }
     
     
@@ -150,9 +161,10 @@ void testSame(int u){
 
 void placeEvent(int ind){
   if (isNewTouch()){
+
     Event e;
     e.op = packOPCode(curEType);
-
+    
     if (curEType == 0){
     //  e.val = 0;//malloc(sizeof(byte));
       e.val = 0;
@@ -165,6 +177,7 @@ void placeEvent(int ind){
   
     curEvent->insert(ind, e);
     renderEventTree();
+  
   }
 }
 
@@ -173,23 +186,23 @@ void runEventMaker(void){
   TSPoint p = getTouchPoint();
   if (p.z == 500){
   
-    for (int i = 0; i < buttons->size(); i++){
+    for (int i = buttons->size() - 1; i >= 0; i--){
       Button *b = buttons->at(i);
       if (p.x >= b->x && p.x < b->x + b->w && p.y >= b->y && p.y < b->y + b->h){
-        Serial.print("we got a trigger on ");
-        Serial.println(i);
         b->callFunc(b->p);
+        
         break;
       }
     }
-    
+   
   }
+  
 }
 
 void event_say_text(int ind){
   if (isNewTouch()){
    curE = &(curEvent->at(ind));
-   setKeyboardMaxLength(50);
+   setKeyboardMaxLength(25);
    grabStringFlag = true;
    pushToState(KEYBOARD_INPUT);
   }
@@ -197,8 +210,6 @@ void event_say_text(int ind){
 
 void event_set_var(int ind){
   if (isNewTouch()){
-    Serial.println("set_var");
-    Serial.println(ind);
     curE = &(curEvent->at(ind));
     pushToState(SET_VAR);//SELECT_VAR);
   }
