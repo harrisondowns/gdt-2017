@@ -189,6 +189,8 @@ struct TileEvent{
   byte mapInd;
   vector<Event> *events;
 };
+
+Event *curE;
 vector<Event> *curEvent;
 vector<TileEvent> *tileEvents;
 
@@ -373,6 +375,8 @@ void loop(void) {
 void pushToState(int state){
   clearButtons();
   for (int i = 0; i < programStack->size(); i++){
+    Serial.println("Stack:");
+    Serial.println(programStack->at(i));
   }
   
   programStack->push_back(state);
@@ -388,6 +392,7 @@ void pushToState(int state){
 void popState(int rip){
   programStack->pop_back();
   int state = programStack->back();
+  programStack->pop_back();
   pushToState(state);
 }
 
