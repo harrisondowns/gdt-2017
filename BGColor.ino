@@ -11,12 +11,18 @@ void drawBGColor(void){
   tft.println("Background Color");
 
   for (int i = 0; i < numSprites; i++){
+
       int x = (i % 5) * spriteSpacingW + spriteTileBaseX - 1;
       int y = (i / 5) * spriteSpacingW + spriteTileBaseY - 1;
       int w = spriteTileW;
       int h = spriteTileW;
 
-      
+    if (i == 10){
+      Button *b = makeButton(x, y, w, h, colors[15], WHITE, BLACK, "", selectColor, 15);
+      drawButton(b);
+      continue;
+    }
+ 
      // tft.fillRect(sbX + x * sbS + 1, sbY + y * sbS + 1, sbS - 1, sbS - 1, colors[sprites[currentSprite][x][y]]);
       Button *b = makeButton(x, y, w, h, colors[i], WHITE, BLACK, "", selectColor, i);
       drawButton(b);
