@@ -6,6 +6,7 @@
  *  itself. Variables and functionsthat need to passed or used between program states must 
  *  be declared here in order to be used.
 */
+/* comment */
 
 #include <StandardCplusplus.h>
 #include <system_configuration.h>
@@ -61,6 +62,7 @@ struct Button {
   void (*callFunc)(int par);
   int p;
 };
+
 
 const unsigned colors[16] = {BLACK, DARKGRAY, RED, YELLOW, GOLD, GREEN, CYAN, MAGENTA, 
                        WHITE, LIGHTGRAY, TRANSPARENT, ORANGE, BROWN, DARKGREEN, BLUE, PALE};
@@ -125,6 +127,7 @@ int framesSinceTouch = 0;
 #define BASE_ENGINE 2    // base game play
 #define KEYBOARD_INPUT 3
 #define BASE_MAKER 4 //map editor
+#define BASE_EVENT 5 //event maker
 
 // dynamic array of OSState used in popState() and pushToState()
 vector<int>* programStack;
@@ -140,14 +143,16 @@ void (*drawFuncs[])(void) = {&drawSpriteMaker,
                              &drawSpriteManager, 
                              &drawEngine,
                              &drawKeyboard,
-                             &drawMapMaker};
+                             &drawMapMaker,
+                             &drawEventMaker};
 
 // functions that get called every loop for each OS State
 void (*runFuncs[])(void) = {&runSpriteMaker, 
                             &runSpriteManager, 
                             &runEngine,
                             &runKeyboard,
-                            &runMapMaker};
+                            &runMapMaker,
+                            &runEventMaker};
 
 /* 
  *  #########################################################################
@@ -156,6 +161,8 @@ void (*runFuncs[])(void) = {&runSpriteMaker,
  *  ###                                                                   ###
  *  #########################################################################
 */
+
+int tempA = 0;
 
 // state variable passed between Sprite Manager and Sprite Maker
 int currentSprite = 0;
@@ -168,6 +175,37 @@ int keyboardSL = 0;
 byte *maps;;//[8][6][4];
 
 int standardMapRes = 5;
+int currentMap = 0;
+
+
+
+// event struct
+struct Event{
+  byte op;
+  byte next;
+  void *val;
+};
+
+struct TileEvent{
+  byte x;
+  byte y;
+  byte mapInd;
+  vector<Event> *events;
+};
+
+Event *curE;
+vector<Event> *curEvent;
+vector<TileEvent> *tileEvents;
+
+byte vars[16];
+
+// event opcodes
+#define SAYTEXT 0
+#define SETVAR 1
+#define IFCOND 2
+#define TRANSFER 3
+
+
 
 /* 
  *  #########################################################################
@@ -246,7 +284,7 @@ bool isNewTouch(){
   */
 void setup(void) {
 
-
+  tileEvents = new vector<TileEvent>();
   buttons = new vector<Button*>();
 
   Serial.begin(9600);
@@ -299,7 +337,7 @@ void setup(void) {
     for (int j = 0; j < 6; j++){
       for (int k = 0; k < 4; k ++){
         //maps[i][j][k] = 0;
-        setMaps(i, j, k, 0);
+        setMaps(i, j, k, 15);
       }
     }
   }
@@ -332,7 +370,7 @@ long delta = 0;
   */
 void loop(void) {
   
-  delta = millis() - timeSinceLastLoop;
+  delta = millis() - TimeSinceLastLoop;
   runFuncs[osState]();
   TimeSinceLastLoop += delta;
  
@@ -348,11 +386,6 @@ void loop(void) {
 void pushToState(int state){
   Serial.println("pushToState");
   clearButtons();
-  for (int i = 0; i < programStack->size(); i++){
-    Serial.print("Stack var: ");
-    Serial.println(programStack->at(i));
-  }
-  
   programStack->push_back(state);
   drawFuncs[state]();
   osState = state;
@@ -368,6 +401,7 @@ void popState(int rip){
   Serial.println("POPPING OS STATE!");
   programStack->pop_back();
   int state = programStack->back();
+  programStack->pop_back();
   pushToState(state);
   Serial.println("PUSH!");
 }
@@ -488,12 +522,14 @@ void drawMap(int x, int y, int mapID, int res){
   int spriteDim = res * 8;
   for (int j = 0; j < 6; j++){
     for (int i = 0; i < 8; i++){
-      drawSpriteWithRes(x + spriteDim * i, y + spriteDim * j, getFromMaps(i, j, mapID), res);//maps[i][j][mapID], res);
+      if (getFromMaps(i, j, mapID) != 15){
+        drawSpriteWithRes(x + spriteDim * i, y + spriteDim * j, getFromMaps(i, j, mapID), res);//maps[i][j][mapID], res);
+      }
     }
   }
 }
 
-
+/* array grab functions */
 byte getFromMaps(int x, int y, int z){
   return maps[6*4*x + 4*y + z];
 }
@@ -508,5 +544,29 @@ byte getFromSprites(int x, int y, int z){
 
 void setSprites(int x, int y, int z, byte num){
   sprites[8*8*x + 8*y + z] = num;
+}
+
+vector<Event>* eventOf(int x, int y, int z){
+  for (int i = 0; i < tileEvents->size(); i++){
+    TileEvent e = tileEvents->at(i);
+    if (e.x == x && e.y == y && e.mapInd == z){
+      return e.events;
+    }
+  }
+  TileEvent te;
+  te.x = x;
+  te.y = y;
+  te.mapInd = z;
+  te.events = new vector<Event>();
+  tileEvents->push_back(te);
+  return te.events;
+}
+
+byte unpackOPCode(struct Event e){
+  return e.op >> 4;
+}
+
+byte packOPCode (byte op){
+  return op << 4;
 }
 

@@ -3,15 +3,21 @@
  *  or playtesting the game, this OS State will be used.
 */
 
-int player_x;
-int player_y;
+int player_x = 159;
+int player_y = 119;
 bool is_running;
+int target_x;
+int target_y;
+int TimeSinceLastMove = 0;
 bool moving = false;
+
 
 void drawEngine(void){
   tft.fillScreen(GREEN);
+  draw_character(player_x, player_y);
   //drawSprite(50, 50, 0);
-  //drawMap(0, 0, 0, standardMapRes);
+  drawMap(0, 0, 0, standardMapRes);
+
   
 }
 
@@ -25,14 +31,19 @@ void runEngine(void){
 
 void move_character(void) 
 {
+  TimeSinceLastMove += delta;
   TSPoint p = getTouchPoint();
-  if (/*is_move(p.x, p.y) &&*/ p.z == 500) {
+  if ( p.z == 500) {
     Serial.print("FOUND NEW MOVE\n");
-    tft.fillRect(player_x, player_y, 40, 40, GREEN);
-    pointa_pointb(p);
+    moving = true;
+    target_x = p.x;
+    target_y = p.y;
+    movement();
   }
 
 }
+
+
 
 bool is_move(int x, int y) 
 {
@@ -70,31 +81,34 @@ void draw_character(int x, int y)
   return ot;
 }*/
 
-void movement(){
-  if(moving){
-    if(TimeSinceLastLoop > 250){
-      
-      }
-  }
-}
-
-void pointa_pointb(TSPoint b){
-  int blockx1 = (b.x / (8 * standardMapRes));
-  int blocky1 = (b.y / (8 * standardMapRes));
-  int blockx2 = (player_x / (8 * standardMapRes));
-  int blocky2 = (player_y / (8 * standardMapRes));
-
+  
   
 
 
  
-void pointa_pointb(TSPoint b){
+/*void pointa_pointb(TSPoint b){
+  int blockx1 = (b.x / (8 * standardMapRes));
+  int blocky1 = (b.y / (8 * standardMapRes));
+  int blockx2 = (player_x / (8 * standardMapRes));
+  int blocky2 = (player_y / (8 * standardMapRes));
   while (blockx1 != blockx2){
       if (blockx1 < blockx2){
         blockx2 = blockx2 - 1;
+        if(check_collision(blockx2, blocky2)) {
+          blockx2++;
+          tft.fillRect(player_x, player_y, 40, 40, GREEN);
+          draw_character(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8));
+          return;
+        }
       }
       else if (blockx1 > blockx2) {
         blockx2 = blockx2 + 1;
+        if(check_collision(blockx2, blocky2)) {
+          blockx2--;
+          tft.fillRect(player_x, player_y, 40, 40, GREEN);
+          draw_character(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8));
+          return;
+        }
       }
       tft.fillRect(player_x, player_y, 40, 40, GREEN);
       draw_character(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8));
@@ -105,15 +119,101 @@ void pointa_pointb(TSPoint b){
   while (blocky1 != blocky2){
       if (blocky1 < blocky2){
         blocky2 = blocky2 - 1;
+        if(check_collision(blockx2, blocky2)) {
+          blocky2++;
+          tft.fillRect(player_x, player_y, 40, 40, GREEN);
+          draw_character(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8));
+          return;
+        }
       }
       else if (blocky1 > blocky2) {
         blocky2 = blocky2 + 1;
+        if(check_collision(blockx2, blocky2)) {
+          blocky2--;
+          tft.fillRect(player_x, player_y, 40, 40, GREEN);
+          draw_character(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8));
+          return;
+        }
       }
       Serial.print("Changing Y\n");
       tft.fillRect(player_x, player_y, 40, 40, GREEN);
       draw_character(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8));
       delay(100);
   }
+}*/
+
+bool check_collision(int blockx, int blocky) 
+{
+  Serial.print(getFromMaps(blockx, blocky, currentMap));
+  if (getFromMaps(blockx, blocky, currentMap) != 15) {
+    return true;
+  }
+  return false;
+  
 }
 
+
+void movement(){
+  if(moving){
+    if(TimeSinceLastMove > 250){
+       tft.fillRect(player_x, player_y, 40, 40, GREEN);
+        int blockx1 = (target_x / (8 * standardMapRes));
+        int blocky1 = (target_y / (8 * standardMapRes));
+        int blockx2 = (player_x / (8 * standardMapRes));
+        int blocky2 = (player_y / (8 * standardMapRes));
+        TimeSinceLastMove = 0;
+    if (blockx1 != blockx2){
+      if (blockx1 < blockx2){
+        blockx2 = blockx2 - 1;
+        if(check_collision(blockx2, blocky2)) {
+          blockx2++;
+          tft.fillRect(player_x, player_y, 40, 40, GREEN);
+          draw_character(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8));
+          return;
+        }
+      }
+      else if (blockx1 > blockx2) {
+        blockx2 = blockx2 + 1;
+        if(check_collision(blockx2, blocky2)) {
+          blockx2--;
+          tft.fillRect(player_x, player_y, 40, 40, GREEN);
+          draw_character(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8));
+          return;
+        }
+      }
+      tft.fillRect(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8), 40, 40, GREEN);
+      draw_character(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8));
+    }
+
+    else if (blocky1 != blocky2){
+      if (blocky1 < blocky2){
+        blocky2 = blocky2 - 1;
+        if(check_collision(blockx2, blocky2)) {
+          blocky2++;
+          tft.fillRect(player_x, player_y, 40, 40, GREEN);
+          draw_character(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8));
+          return;
+        }
+      }
+      else if (blocky1 > blocky2) {
+        blocky2 = blocky2 + 1;
+        if(check_collision(blockx2, blocky2)) {
+          blocky2--;
+          tft.fillRect(player_x, player_y, 40, 40, GREEN);
+          draw_character(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8));
+          return;
+        }
+      }
+      tft.fillRect(player_x, player_y, 40, 40, GREEN);
+      draw_character(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8));
+    }
+    else {
+      moving = false;
+        draw_character(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8));
+    }
+    
+    }
+  }
+}
+  
 
