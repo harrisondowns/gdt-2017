@@ -15,6 +15,8 @@
 #define sbMX (sbX + (8 * sbS))
 #define sbMY (sbY + (8 * sbS))
 
+const char *exitS = "EXIT";
+
 int oldcolor, currentcolor;
 int colorInd = 0;
 
@@ -85,7 +87,8 @@ void drawSpriteMaker(void){
 
     }
   }
-  Button *back = makeButton(saveX, saveY, saveW, saveW, BLUE, WHITE, WHITE, "Exit", popState, 0);
+  Serial.println("EXIT S");
+  Button *back = makeButton(saveX, saveY, saveW, saveW, BLUE, WHITE, WHITE, exitS, popState, 0);
   drawButton(back);
   tft.setCursor(100, 10);
   tft.setTextColor(WHITE);  
@@ -96,12 +99,11 @@ void drawSpriteMaker(void){
 /* placeTile() - function responsible for coloring in a specific tile of the sprite maker. */
 void placeTile(int i){
   Button *b = buttons->at(i); 
-  Serial.println("i: ");
-  Serial.println(i);
   if (currentcolor != TRANSPARENT){
     tft.fillRect(b->x, b->y, sbS - 1, sbS - 1, currentcolor);
   }
   else{
+    tft.fillRect(b->x, b->y, sbS - 1, sbS - 1, BLACK);
     tft.drawLine(b->x, b->y, b->x + sbS - 1, b->y + sbS - 1, WHITE);
     tft.drawLine(b->x + sbS - 1, b->y, b->x, b->y + sbS - 1, WHITE);      
   }

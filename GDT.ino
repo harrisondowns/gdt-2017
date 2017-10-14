@@ -166,6 +166,7 @@ int keyboardSL = 0;
 byte *maps;;//[8][6][4];
 
 int standardMapRes = 5;
+int currentMap = 0;
 
 /* 
  *  #########################################################################
@@ -297,7 +298,7 @@ void setup(void) {
     for (int j = 0; j < 6; j++){
       for (int k = 0; k < 4; k ++){
         //maps[i][j][k] = 0;
-        setMaps(i, j, k, 0);
+        setMaps(i, j, k, 15);
       }
     }
   }
@@ -336,17 +337,13 @@ void loop(void) {
  *          state - the index of the OS State to push to.
   */
 void pushToState(int state){
-  Serial.println("pushToState");
   clearButtons();
   for (int i = 0; i < programStack->size(); i++){
-    Serial.print("Stack var: ");
-    Serial.println(programStack->at(i));
   }
   
   programStack->push_back(state);
   drawFuncs[state]();
   osState = state;
-  Serial.println("DONE PUSH!");
 }
 
 /* popState() - OS Function that pops back to the previous state. 
@@ -355,11 +352,9 @@ void pushToState(int state){
  *                unify the function headers for popState and pushToState
   */
 void popState(int rip){
-  Serial.println("POPPING OS STATE!");
   programStack->pop_back();
   int state = programStack->back();
   pushToState(state);
-  Serial.println("PUSH!");
 }
 
 /* 
@@ -394,6 +389,8 @@ Button* makeButton(int x, int y, int w, int h, unsigned background, unsigned fra
   newBut->backgroundColor = background;
   newBut->frameColor = frame;
   newBut->text = text;
+ // newBut->text = malloc(sizeof(byte) * strlen(text) + 1);
+ // strcpy(newBut->text, text);
   newBut->textColor = textColor;
   newBut->callFunc = callFunc;
   newBut->p = par;
@@ -433,6 +430,7 @@ void drawButton(Button* but){
   tft.setCursor(but->x + 3, but->y + 3);
   tft.setTextColor(but->textColor);
   tft.setTextSize(1);
+  Serial.println(but->text);
   tft.println(but->text);
 }
 
@@ -478,7 +476,9 @@ void drawMap(int x, int y, int mapID, int res){
   int spriteDim = res * 8;
   for (int j = 0; j < 6; j++){
     for (int i = 0; i < 8; i++){
-      drawSpriteWithRes(x + spriteDim * i, y + spriteDim * j, getFromMaps(i, j, mapID), res);//maps[i][j][mapID], res);
+      if (getFromMaps(i, j, mapID) != 15){
+        drawSpriteWithRes(x + spriteDim * i, y + spriteDim * j, getFromMaps(i, j, mapID), res);//maps[i][j][mapID], res);
+      }
     }
   }
 }
