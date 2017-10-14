@@ -72,6 +72,8 @@ void backspace(int rip){
 }
 
 void exitKeyboard(int rip){
+  onlyNums = false;
+  setKeyboardMaxLength(25);
   popState(0);
 }
 
