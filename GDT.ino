@@ -17,7 +17,6 @@
 #include <TouchScreen.h>   // touch screen library
 
 using namespace std;
-
 /* 
  *  #########################################################################
  *  ###                                                                   ###
@@ -252,7 +251,7 @@ TSPoint getTouchPoint(){
   digitalWrite(13, HIGH);
   TSPoint p = ts.getPoint();
   digitalWrite(13, LOW);
-
+  pinMode(23, INPUT);
   pinMode(XM, OUTPUT);
   pinMode(YP, OUTPUT);
 
@@ -438,7 +437,12 @@ void popState(int rip){
  *                par - the variable to pass in to callFunc when it gets called.
   */
 Button* makeButton(int x, int y, int w, int h, unsigned background, unsigned frame, unsigned textColor, char* text, void (*callFunc)(int x), int par){
+  Serial.print("ABOUT TO MALLOC\n");
   Button *newBut = malloc(sizeof(Button));
+  if (newBut == NULL) {
+    Serial.print("BAD MALLOC\n");
+  }
+  Serial.print("GOOD MALLOC\n");
   newBut->x = x;
   newBut->y = y;
   newBut->w = w;
@@ -450,6 +454,7 @@ Button* makeButton(int x, int y, int w, int h, unsigned background, unsigned fra
   newBut->callFunc = callFunc;
   newBut->p = par;
   buttons->push_back(newBut);
+
   return newBut;
 }
 
@@ -458,7 +463,7 @@ Button* makeButton(int x, int y, int w, int h, unsigned background, unsigned fra
 void clearButtons(){
   for (int i = 0; i < buttons->size(); i++){
     Button *b = buttons->at(i);
-    delete b;
+    free(b);
   }
   buttons->clear();
 }
@@ -486,6 +491,7 @@ void drawButton(Button* but){
   tft.setTextColor(but->textColor);
   tft.setTextSize(1);
   tft.println(but->text);
+  Serial.print("BUTTON DRAWN\n");
 }
 
 void drawText(int x, int y, int size, char *text, unsigned color){
@@ -570,11 +576,23 @@ vector<Event>* eventOf(int x, int y, int z){
   return te.events;
 }
 
+vector<Event>* find_event(int x, int y, int z){
+  for (int i = 0; i < tileEvents->size(); i++){
+    TileEvent e = tileEvents->at(i);
+    if (e.x == x && e.y == y && e.mapInd == z){
+      return e.events;
+    }
+  }
+  return NULL;
+}
+
+
 byte unpackOPCode(struct Event e){
   return e.op >> 4;
 }
 
 byte packOPCode (byte op){
+  
   return op << 4;
 }
 

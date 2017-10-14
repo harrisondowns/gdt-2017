@@ -10,13 +10,20 @@ int target_x;
 int target_y;
 int TimeSinceLastMove = 0;
 bool moving = false;
+int txt_box_w = 320;
+int txt_box_h = 59;
 
-
+void (*execute_events[])(Event) = { &saytext,
+                                    &setvar,
+                                    //&ifcond,
+                                    //&transfer_exe 
+                                    };
 void drawEngine(void){
   tft.fillScreen(GREEN);
   drawMap(0, 0, 0, standardMapRes);
   position_player();
   draw_character(player_x, player_y);
+  //make_text_box("This is a text box!!");
   //drawSprite(50, 50, 0);
 
   
@@ -27,7 +34,11 @@ void runEngine(void){
   is_running = true;
     //delay(100);
   move_character();
-  
+  //Serial.print(digitalRead(23));
+  if(digitalRead(23) == HIGH) {
+    //Serial.print("HIGH\n");
+    pushToState(BASE_MAKER);
+  }
 }
 
 void position_player(void)
@@ -189,6 +200,7 @@ void movement(){
     if (blockx1 != blockx2){
       if (blockx1 < blockx2){
         blockx2 = blockx2 - 1;
+        check_event(blockx2, blocky2);
         if(check_collision(blockx2, blocky2)) {
           blockx2++;
           tft.fillRect(player_x, player_y, 40, 40, GREEN);
@@ -198,6 +210,7 @@ void movement(){
       }
       else if (blockx1 > blockx2) {
         blockx2 = blockx2 + 1;
+        check_event(blockx2, blocky2);
         if(check_collision(blockx2, blocky2)) {
           blockx2--;
           tft.fillRect(player_x, player_y, 40, 40, GREEN);
@@ -212,6 +225,7 @@ void movement(){
     else if (blocky1 != blocky2){
       if (blocky1 < blocky2){
         blocky2 = blocky2 - 1;
+        check_event(blockx2, blocky2);
         if(check_collision(blockx2, blocky2)) {
           blocky2++;
           tft.fillRect(player_x, player_y, 40, 40, GREEN);
@@ -221,6 +235,7 @@ void movement(){
       }
       else if (blocky1 > blocky2) {
         blocky2 = blocky2 + 1;
+        check_event(blockx2, blocky2);
         if(check_collision(blockx2, blocky2)) {
           blocky2--;
           tft.fillRect(player_x, player_y, 40, 40, GREEN);
@@ -239,5 +254,57 @@ void movement(){
     }
   }
 }
+
+void make_text_box(char *text)
+{ 
+  tft.fillRect(0, 240 - txt_box_h, txt_box_w, txt_box_h, BLACK);
+  tft.drawFastHLine(0, 240 - txt_box_h + 1, 320, LIGHTGRAY);
+  drawText(10, 240 - txt_box_h + 25 , 2, text, WHITE);
   
+}
+
+void check_event(int blockx, int blocky)
+{
+  vector<Event> *found_event = find_event(blockx, blocky, currentMap);
+  if (found_event == NULL) {
+    return;
+  } else {
+    do_events(found_event);
+  }
+}
+
+void do_events(vector<Event> *events)
+{
+  byte OPCode;
+  byte operand;
+  
+  for (int i = 0; i < events->size(); i++) {
+    OPCode = unpackOPCode((*events)[i]);
+    operand = unpackOperand((*events)[i]);
+    execute_events[OPCode]((*events)[i]);
+  }
+}
+
+
+
+void saytext(Event curr_event)
+{
+  make_text_box((char*) curr_event.val);
+  TSPoint p = getTouchPoint();
+  delay(330);
+  while (p.z != 500){
+    //Serial.print("waiting\n");
+    p = getTouchPoint();
+    }
+  tft.fillRect(0, 240 - txt_box_h - 1, txt_box_w, txt_box_h + 1, GREEN);
+  drawMap(0, 0, currentMap, standardMapRes);
+  return;
+  
+}
+                                    
+void setvar(Event curr_event) 
+{
+  int var = (int) curr_event.val;
+                               
+}
 
