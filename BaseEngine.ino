@@ -5,18 +5,25 @@
 
 
 void drawEngine(void){
- // tft.fillScreen(GREEN);
+  tft.fillScreen(GREEN);
   //drawSprite(50, 50, 0);
   drawMap(0, 0, 0, standardMapRes);
+  
 }
 
 
 void runEngine(void){
   for (int i = 0; i < 5; i++){
-    drawSprite(i * 48, 50, 0);
-    delay(500);
+    delay(250);
     tft.fillRect(i * 48, 50, 48, 48, GREEN);
   }
   
 }
 
+void move_character(void) 
+{
+  TSPoint p = getTouchPoint();
+  draw_character(x, y);
+}
+
+void draw_character(int x, int y)
