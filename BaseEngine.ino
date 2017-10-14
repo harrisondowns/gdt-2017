@@ -18,22 +18,36 @@ void drawEngine(void){
 
 void runEngine(void){
   is_running = true;
-  while(is_running) {
-    delay(50);
-    move_character();
-
-  }
+    //delay(100);
+  move_character();
   
 }
 
 void move_character(void) 
 {
   TSPoint p = getTouchPoint();
-  if (isNewTouch() and p.x != player_x and p.y != player_y) {
+  if (/*is_move(p.x, p.y) &&*/ p.z == 500) {
+    Serial.print("FOUND NEW MOVE\n");
     tft.fillRect(player_x, player_y, 40, 40, GREEN);
-    draw_character(p.x, p.y);
+    pointa_pointb(p);
   }
 
+}
+
+bool is_move(int x, int y) 
+{
+  if (x == 0 && y == 0) {
+    return false;
+  }
+  int blockx1 = (x / (8 * standardMapRes)) *(8 * standardMapRes);
+  int blocky1 = (y / (8 * standardMapRes)) *(8 * standardMapRes);
+  int blockx2 = (player_x / (8 * standardMapRes)) *(8 * standardMapRes);
+  int blocky2 = (player_y / (8 * standardMapRes)) *(8 * standardMapRes);
+
+  if ((blockx1 != blockx2) || (blocky1 != blocky2)) {
+    return true;
+  }
+  return false;
 }
 
 void draw_character(int x, int y) 
@@ -46,21 +60,15 @@ void draw_character(int x, int y)
 }
 
 
-TSPoint match_grid(TSPoint ot){
-  ot.x = (ot.x / (standardMapRes * 8)) * (standardMapRes * 8);
-  ot.y = (ot.y / (standardMapRes * 8)) * (standardMapRes * 8);
+
+
+/*TSPoint match_grid(TSPoint ot){
+  ot.x = (x / (standardMapRes * 8)) * (standardMapRes * 8);
+  ot.y = (y / (standardMapRes * 8)) * (standardMapRES * 8);
+>>>>>>> Stashed changes
 
   return ot;
-}
-
-
-//getfrommaps function maps[15] is valid movable terrain
-//bool check_collision(
-//  if (getFromMaps(player_x, player_y, 0) != 15){
-  
-///  }
-//millis retunrns a long since the start of the program
-
+}*/
 
 void movement(){
   if(moving){
@@ -70,25 +78,41 @@ void movement(){
   }
 }
 
+void pointa_pointb(TSPoint b){
+  int blockx1 = (b.x / (8 * standardMapRes));
+  int blocky1 = (b.y / (8 * standardMapRes));
+  int blockx2 = (player_x / (8 * standardMapRes));
+  int blocky2 = (player_y / (8 * standardMapRes));
+
+  
+
+
  
 void pointa_pointb(TSPoint b){
-  while (player_x != b.x){
-      if (player_x < b.x){
-        player_x = player_x + (standardMapRes * 8);
+  while (blockx1 != blockx2){
+      if (blockx1 < blockx2){
+        blockx2 = blockx2 - 1;
       }
-      else {
-        player_x = player_x - (standardMapRes * 8);
+      else if (blockx1 > blockx2) {
+        blockx2 = blockx2 + 1;
       }
-      draw_character(player_x, player_y);
+      tft.fillRect(player_x, player_y, 40, 40, GREEN);
+      draw_character(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8));
+      Serial.print("Changing X\n");
+      delay(100);
   }
-  while (player_y != b.y){
-     if (player_y < b.y){
-        player_y = player_y + (standardMapRes * 8);
+
+  while (blocky1 != blocky2){
+      if (blocky1 < blocky2){
+        blocky2 = blocky2 - 1;
       }
-      else {
-        player_y = player_y - (standardMapRes *8);
+      else if (blocky1 > blocky2) {
+        blocky2 = blocky2 + 1;
       }
-      draw_character(player_x, player_y);
+      Serial.print("Changing Y\n");
+      tft.fillRect(player_x, player_y, 40, 40, GREEN);
+      draw_character(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8));
+      delay(100);
   }
 }
 
