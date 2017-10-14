@@ -587,7 +587,14 @@ byte unpackOPCode(struct Event e){
 }
 
 byte packOPCode (byte op){
-  return op << 4;
+  if (op == 0){
+    return 0;
+  }
+  else{
+    return 16;
+  }
+  
+  //return op << 4;
 }
 
 byte unpackOperand(struct Event e){
