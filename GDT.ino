@@ -394,11 +394,6 @@ void loop(void) {
 void pushToState(int state){
   Serial.println("pushToState");
   clearButtons();
-<<<<<<< HEAD
-=======
-  Serial.println("Stack: Begin");
-  for (int i = 0; i < programStack->size(); i++){
->>>>>>> master
   programStack->push_back(state);
   drawFuncs[state]();
   osState = state;
