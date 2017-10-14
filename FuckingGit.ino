@@ -18,7 +18,7 @@ int curr_pos = 0;
 void (*execute_events[])(Event) = { &saytext,
                                     &setvar,
                                     &ifcond,
-                                    //&transfer_exe 
+                                    &transfer_exe 
                                     };
 void drawEngine(void){
   tft.fillScreen(currentBackground);
@@ -35,7 +35,14 @@ void drawEngine(void){
 void runEngine(void){
   is_running = true;
     //delay(100);
+
+  Serial.println("*** RUN ENGINE ****");
+  Serial.print(player_x);
+ Serial.print(player_y); 
   move_character();
+   Serial.println("*** END ENGINE ***");
+
+  
   //Serial.print(digitalRead(23));
   if(digitalRead(23) == HIGH) {
     //Serial.print("HIGH\n");
@@ -100,8 +107,8 @@ bool is_move(int x, int y)
 
 void draw_character(int x, int y) 
 {
-  int corn_y = (y / (8 * standardMapRes)) *(8 * standardMapRes);
-  int corn_x = (x / (8 * standardMapRes)) *(8 * standardMapRes);
+  int corn_y = (y / (8 * standardMapRes)) * (8 * standardMapRes);
+  int corn_x = (x / (8 * standardMapRes)) * (8 * standardMapRes);
   drawSpriteWithRes(corn_x, corn_y, 0, standardMapRes);
   player_x = corn_x;
   player_y = corn_y;
@@ -184,11 +191,14 @@ bool check_collision(int blockx, int blocky)
     return true;
   }
   return false;
-  
 }
 
 
 void movement(){
+  if (player_x == target_x && player_y == target_y) {
+    draw_character(player_x, player_y);
+    return;
+    }
   if(moving){
     if(TimeSinceLastMove > 250){
        tft.fillRect(player_x, player_y, 40, 40, currentBackground);
@@ -200,7 +210,9 @@ void movement(){
     if (blockx1 != blockx2){
       if (blockx1 < blockx2){
         blockx2 = blockx2 - 1;
-        check_event(blockx2, blocky2);
+        if(check_event(blockx2, blocky2)){
+          return;
+        }
         if(check_collision(blockx2, blocky2)) {
           blockx2++;
           tft.fillRect(player_x, player_y, 40, 40, currentBackground);
@@ -210,7 +222,9 @@ void movement(){
       }
       else if (blockx1 > blockx2) {
         blockx2 = blockx2 + 1;
-        check_event(blockx2, blocky2);
+       if (check_event(blockx2, blocky2)) {
+          return;
+       }
         if(check_collision(blockx2, blocky2)) {
           blockx2--;
           tft.fillRect(player_x, player_y, 40, 40, currentBackground);
@@ -225,7 +239,9 @@ void movement(){
     else if (blocky1 != blocky2){
       if (blocky1 < blocky2){
         blocky2 = blocky2 - 1;
-        check_event(blockx2, blocky2);
+      if (check_event(blockx2, blocky2)) {
+          return;
+       }
         if(check_collision(blockx2, blocky2)) {
           blocky2++;
           tft.fillRect(player_x, player_y, 40, 40, currentBackground);
@@ -235,7 +251,9 @@ void movement(){
       }
       else if (blocky1 > blocky2) {
         blocky2 = blocky2 + 1;
-        check_event(blockx2, blocky2);
+       if (check_event(blockx2, blocky2)) {
+          return;
+       }
         if(check_collision(blockx2, blocky2)) {
           blocky2--;
           tft.fillRect(player_x, player_y, 40, 40, currentBackground);
@@ -264,13 +282,14 @@ void make_text_box(char *text)
   
 }
 
-void check_event(int blockx, int blocky)
+bool check_event(int blockx, int blocky)
 {
   found_event = find_event(blockx, blocky, currentMap);
   if (found_event == NULL) {
-    return;
+    return false;
   } else {
     do_events(found_event);
+    return true;
   }
 }
 
@@ -335,5 +354,25 @@ void ifcond(Event curr_event)
   if (is_true) {
     int OPCode = unpackOPCode((*found_event)[curr_pos + 1]);
     execute_events[OPCode]((*found_event)[curr_pos + 1]);
+  }
 }
+
+
+void transfer_exe(Event curr_event)  
+{
+ currentMap = curr_event.z;
+ player_x = curr_event.x * (standardMapRes * 8); 
+ player_y = curr_event.y * (standardMapRes * 8);
+ Serial.println("\n\n\n\n\n\n\nTRANSFER\n\n\n\n\n\n");
+ Serial.print(player_x);
+ Serial.print(player_y); 
+ //target_x = player_x;
+ //target_y = player_y;
+ tft.fillScreen(currentBackground);
+ drawMap(0, 0, currentMap, standardMapRes);
+ draw_character(player_x, player_y);
+ //TimeSinceLastMove = 330;
+ //movement();
+}
+
 

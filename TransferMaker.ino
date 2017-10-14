@@ -81,14 +81,14 @@ void drawTransfer(void){
 
 void changeX(int rip){
   reapXVal = true;
-  setKeyboardMaxLength(2);
+  setKeyboardMaxLength(1);
   numberKeys();
   pushToState(KEYBOARD_INPUT);
 }
 
 void changeY(int rip){
   reapYVal = true;
-  setKeyboardMaxLength(2);
+  setKeyboardMaxLength(1);
   numberKeys();
   pushToState(KEYBOARD_INPUT);
 }
