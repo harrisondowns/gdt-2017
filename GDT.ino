@@ -128,6 +128,9 @@ int framesSinceTouch = 0;
 #define BASE_EVENT 5 //event maker
 #define SELECT_VAR 6 // selecting a variable for events
 #define SET_VAR 7 // set var value
+#define BG_COLOR 8 // set background color
+#define SET_IF_CON 9
+#define SELECT_MAP 10 // select a map to edit
 
 // dynamic array of OSState used in popState() and pushToState()
 vector<int>* programStack;
@@ -138,6 +141,14 @@ vector<Button*>* buttons;
 // osState: current screen of the OS
 int osState = BASE_MAKER;
 
+void drawConditionalMaker(void){
+  
+}
+
+void runConditionalMaker(void){
+  
+}
+
 // functions that draw each OS State
 void (*drawFuncs[])(void) = {&drawSpriteMaker, 
                              &drawSpriteManager, 
@@ -146,7 +157,10 @@ void (*drawFuncs[])(void) = {&drawSpriteMaker,
                              &drawMapMaker,
                              &drawEventMaker,
                              &drawSelectVar,
-                             &drawSetVar};
+                             &drawSetVar,
+                             &drawBGColor,
+                             &drawConditionalMaker,
+                             &drawMapSelect};
 
 // functions that get called every loop for each OS State
 void (*runFuncs[])(void) = {&runSpriteMaker, 
@@ -156,7 +170,11 @@ void (*runFuncs[])(void) = {&runSpriteMaker,
                             &runMapMaker,
                             &runEventMaker,
                             &runSelectVar,
-                            &runSetVar};
+                            &runSetVar,
+                            &runBGColor,
+                            &runConditionalMaker,
+                            &runMapSelect};
+
 
 /* 
  *  #########################################################################
@@ -170,6 +188,7 @@ int tempA = 0;
 
 // state variable passed between Sprite Manager and Sprite Maker
 int currentSprite = 0;
+unsigned currentBackground = colors[5];
 
 // keyboard string variable.
 char keyboardS[100];
@@ -393,6 +412,12 @@ void loop(void) {
 void pushToState(int state){
   Serial.println("pushToState");
   clearButtons();
+  Serial.println("Stack: Begin");
+  for (int i = 0; i < programStack->size(); i++){
+    
+    Serial.println(programStack->at(i));
+  }
+  Serial.println("ENDSTACK");
   programStack->push_back(state);
   drawFuncs[state]();
   osState = state;
@@ -592,7 +617,6 @@ byte unpackOPCode(struct Event e){
 }
 
 byte packOPCode (byte op){
-  
   return op << 4;
 }
 
