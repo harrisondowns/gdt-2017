@@ -524,7 +524,9 @@ void drawMap(int x, int y, int mapID, int res){
   int spriteDim = res * 8;
   for (int j = 0; j < 6; j++){
     for (int i = 0; i < 8; i++){
-      drawSpriteWithRes(x + spriteDim * i, y + spriteDim * j, getFromMaps(i, j, mapID), res);//maps[i][j][mapID], res);
+      if (getFromMaps(i, j, mapID) != 15){
+        drawSpriteWithRes(x + spriteDim * i, y + spriteDim * j, getFromMaps(i, j, mapID), res);//maps[i][j][mapID], res);
+      }
     }
   }
 }
