@@ -12,7 +12,8 @@ void drawEngine(void){
   tft.fillScreen(GREEN);
   draw_character(player_x, player_y);
   //drawSprite(50, 50, 0);
-  //drawMap(0, 0, 0, standardMapRes);
+  drawMap(0, 0, 0, standardMapRes);
+
   
 }
 

@@ -300,7 +300,7 @@ void setup(void) {
     for (int j = 0; j < 6; j++){
       for (int k = 0; k < 4; k ++){
         //maps[i][j][k] = 0;
-        setMaps(i, j, k, 0);
+        setMaps(i, j, k, 15);
       }
     }
   }
