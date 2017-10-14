@@ -186,6 +186,13 @@ void draw_character(int x, int y)
 
 bool check_collision(int blockx, int blocky) 
 {
+/* 
+ *  #########################################################################
+ *  ###                                                                   ###
+ *  ###              VERY IMPORTANT SERIAL DO NOT REMOVE                  ###
+ *  ###                                                                   ###
+ *  #########################################################################
+*/
   Serial.print(getFromMaps(blockx, blocky, currentMap));
   if (getFromMaps(blockx, blocky, currentMap) != 15) {
     return true;
@@ -319,7 +326,7 @@ void saytext(Event curr_event)
     //Serial.print("waiting\n");
     p = getTouchPoint();
   }
-  tft.fillRect(0, 240 - txt_box_h - 1, txt_box_w, txt_box_h + 1, GREEN);
+  tft.fillRect(0, 240 - txt_box_h - 1, txt_box_w, txt_box_h + 1, currentBackground);
   drawMap(0, 0, currentMap, standardMapRes);
   return;
   
