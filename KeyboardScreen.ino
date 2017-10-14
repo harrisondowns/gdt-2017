@@ -6,9 +6,14 @@ int kml;
 int kStartX = 0;
 int kStartY = 0;
 
+bool onlyNums = false;
 
 #define keyWidth 24
 #define keySpace 5
+
+void numberKeys(){
+  onlyNums = true;
+}
 
 void setKeyboardMaxLength(int l){
   kml = l;
@@ -17,8 +22,11 @@ void setKeyboardMaxLength(int l){
 void drawKeyboard(void){
  tft.fillScreen(LIGHTGRAY);
  keyboardSL = 0;
- 
- for (int j = 0; j < 4; j++){
+ int jmax = 4;
+ if (onlyNums == true){
+  jmax = 1;
+ }
+ for (int j = 0; j < jmax; j++){
   for (int i = 0; i < 10; i++){
     int y = 90 + (keyWidth + keySpace) * j;
     int x = i * (keyWidth + keySpace) + (j % 2) * 12 + 12;
@@ -32,10 +40,14 @@ void drawKeyboard(void){
     
   }
  }
- Button *b = makeButton(60, 208, 200, 24, DARKGRAY, WHITE, WHITE, "              Space\0", keyPress, 40);
- drawButton(b);
+ if (onlyNums == false){
+  Button *b = makeButton(60, 208, 200, 24, DARKGRAY, WHITE, WHITE, "              Space\0", keyPress, 40);
+  drawButton(b);
+ }
  Button *e = makeButton(270, 208, 40, 24, DARKGRAY, WHITE, WHITE, "Exit\0", exitKeyboard, 0);
  drawButton(e);
+
+ drawButton(makeButton(270, 64, 45, keyWidth, DARKGRAY, WHITE, WHITE, "DELETE", backspace, 0));
 
  int maxX = 25;
  if (kml < 25){
@@ -48,6 +60,15 @@ void drawKeyboard(void){
  fillRect(kStartX, kStartY, maxX * 12 + 3, ((kml / 25) + 1) * 20, BLACK);
  kStartX += 2;
  kStartY += 2;
+ onlyNums = false;
+}
+
+void backspace(int rip){
+  if (isNewTouch()){
+ // drawText((keyboardSL % 25) * 12 + kStartX, (keyboardSL / 25) * 16 + kStartY, 2, arr, WHITE);
+    keyboardSL--;
+    fillRect((keyboardSL % 25) * 12 + kStartX, (keyboardSL / 25) * 16 + kStartY, 12, 16, BLACK);
+  }
 }
 
 void exitKeyboard(int rip){
