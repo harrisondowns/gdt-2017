@@ -128,9 +128,11 @@ int framesSinceTouch = 0;
 #define BASE_EVENT 5 //event maker
 #define SELECT_VAR 6 // selecting a variable for events
 #define SET_VAR 7 // set var value
+
 #define BG_COLOR 8 // set background color
-#define SET_IF_CON 9
+#define SET_IF_COND 9
 #define SELECT_MAP 10 // select a map to edit
+
 
 // dynamic array of OSState used in popState() and pushToState()
 vector<int>* programStack;
@@ -141,13 +143,6 @@ vector<Button*>* buttons;
 // osState: current screen of the OS
 int osState = BASE_MAKER;
 
-void drawConditionalMaker(void){
-  
-}
-
-void runConditionalMaker(void){
-  
-}
 
 // functions that draw each OS State
 void (*drawFuncs[])(void) = {&drawSpriteMaker, 
@@ -183,6 +178,8 @@ void (*runFuncs[])(void) = {&runSpriteMaker,
  *  ###                                                                   ###
  *  #########################################################################
 */
+
+const char *conditionals[6] = {">", "<", "==", "<=", ">=", "!="};
 
 int tempA = 0;
 
@@ -447,6 +444,8 @@ void popState(int rip){
 */
 
 
+
+
 /* makeButton() - UI Function that creates a button struct with a given set of variables. DOES NOT
  *                DRAW THE ACTUAL BUTTON. To draw a button, see "drawButton()" down below.
  *          Inputs:
@@ -462,12 +461,7 @@ void popState(int rip){
  *                par - the variable to pass in to callFunc when it gets called.
   */
 Button* makeButton(int x, int y, int w, int h, unsigned background, unsigned frame, unsigned textColor, char* text, void (*callFunc)(int x), int par){
-  Serial.print("ABOUT TO MALLOC\n");
   Button *newBut = malloc(sizeof(Button));
-  if (newBut == NULL) {
-    Serial.print("BAD MALLOC\n");
-  }
-  Serial.print("GOOD MALLOC\n");
   newBut->x = x;
   newBut->y = y;
   newBut->w = w;
@@ -516,7 +510,6 @@ void drawButton(Button* but){
   tft.setTextColor(but->textColor);
   tft.setTextSize(1);
   tft.println(but->text);
-  Serial.print("BUTTON DRAWN\n");
 }
 
 void drawText(int x, int y, int size, char *text, unsigned color){
@@ -624,4 +617,22 @@ byte unpackOperand(struct Event e){
   return e.op & 15;
 }
 
+byte unpackCondType(struct Event e){
+  byte r = (byte)((int)e.val >> 8);
+  return r;
+}
+
+byte unpackCondCons(struct Event e){
+  return (byte)((int)e.val & 255);
+}
+
+void * pack2Bytes(byte a, byte b){
+  int16_t a16 = (int16_t)a;
+  int r = a16 << 8;
+  r = r & 0b1111111100000000;// (char)0;
+  r = r | b;
+  Serial.print("pack: ");
+  Serial.println(r);
+  return (void*) r;
+}
 

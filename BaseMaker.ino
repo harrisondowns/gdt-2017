@@ -7,7 +7,6 @@ unsigned backcol = currentBackground;
 int currentTileSelected = 15;
 
 void drawMapMaker(void){
-  Serial.print("DRAW MAP MAKER \n");
  //tft.fillScreen(GREEN);
   //drawSprite(50, 50, 0);
   fillRect(0, 0, 64, 240, BLACK);
@@ -64,6 +63,8 @@ void drawMapMaker(void){
           }
         }
   }
+  drawRect(currentTileSelected / 8 * 24, currentTileSelected % 8 * 24, 25, 25, RED);
+
 
 
 }

@@ -12,12 +12,12 @@ const void (*OP_FUNCS[])(int) = {&event_say_text, &event_set_var, &event_if_cond
 bool grabStringFlag = false;
 bool grabVarFlag = false;
 
+bool ifSwtch = false;
 
 
 int curEType = 0;
 
 void drawEventMaker(void){
-  Serial.print("DRAWING EVENT MAKER \n");
   if (grabStringFlag == true){
    // curE->val = keyboardS;
     if (curE->val != NULL){
@@ -29,15 +29,12 @@ void drawEventMaker(void){
   
   
   tft.fillScreen(LIGHTGRAY);
-  Serial.print("BUTTONING\n");
   tempA = 10;
   drawButton(makeButton(10, tempA, 60, 20, DARKGRAY, WHITE, WHITE, "Say Text", selectOPCode, SAYTEXT));
-  Serial.print("BUTTONED\n");
   tempA += COMMHEIGHT;
   
   drawButton(makeButton(10, tempA, 60, 20, DARKGRAY, WHITE, WHITE, "Set Var", selectOPCode, SETVAR));
   tempA += COMMHEIGHT;
-  Serial.print("HALF-BUTTONED\n");
   drawButton(makeButton(10, tempA, 60, 20, DARKGRAY, WHITE, WHITE, "If Cond.", selectOPCode, IFCOND));
   tempA += COMMHEIGHT;
 
@@ -45,7 +42,6 @@ void drawEventMaker(void){
   tempA += COMMHEIGHT;
 
   drawButton(makeButton(10, 200, 40, 40, BLUE, WHITE, WHITE, "EXIT", exitEvent, 0));
-  Serial.print("DONE BUTTONING\n");
 
   renderEventTree();
 }
@@ -97,10 +93,16 @@ void renderEventTree(){
   int y = 10;
   fillRect(BASE_X_OFF, y, 120, curEvent->size() * 40, LIGHTGRAY);
   
+
   
   int xOff = BASE_X_OFF;
   for (int i = 0; i < curEvent->size(); i++){
+    ifSwtch = false;
+
     Event e = curEvent->at(i);
+    xOff = BASE_X_OFF + 25 * e.next;
+   
+    
     byte eType = unpackOPCode(e);
 
     drawButton(makeButton(xOff, y, 100, 30, DARKGRAY, LIGHTGRAY, WHITE, OP_STRINGS[eType], OP_FUNCS[eType], i));
@@ -144,19 +146,95 @@ void renderEventTree(){
       str[6] = 0;
 
       
-      drawText(BASE_X_OFF + 5, y + 20, 1, str, WHITE);
-      
+      drawText(xOff + 5, y + 20, 1, str, WHITE);
       
     }
-    
-    
+    else if (eType == 2){
+      ifSwtch = true;
+
+      char str[12];
+      str[0] = 'V';
+      str[1] = 'a';
+      str[2] = 'r';
+      str[3] = ' ';
+
+      byte oper = unpackOperand(e);
+      
+      if (oper >= 10){
+        str[4] = '1';
+        str[5] = (oper - 10) + '0';
+      }
+      else{
+        str[4] = oper + '0';
+        str[5] = ' ';
+      } 
+      str[6] = 0;
+      drawText(xOff + 5, y + 20, 1, str, WHITE);
+
+      
+      byte cond = unpackCondType(e);
+      drawText(xOff + 5 + 6 * 6, y + 20, 1, conditionals[cond], WHITE);
+
+      byte cons = unpackCondCons(e);
+
+
+      if (cons >= 10){
+        str[0] = (cons / 10) + '0';
+        str[1] = (cons % 10) + '0';
+      }
+      else{
+        str[0] = cons + '0';
+        str[1] = ' ';
+      } 
+      
+      str[2] = 0;
+      
+      drawText(xOff + 5 + 10 * 6, y + 20, 1, str, WHITE);
+      /*Serial.print("cond is ");
+      Serial.println(cond);
+      if (cond >= 2){
+        str[6] = conditionals[cond][0];
+        str[7] = conditionals[cond][1];
+      }
+      if (cond < 2){
+        str[6] = conditionals[cond][0];
+        str[7] = ' ';
+      }
+
+      str[8] = ' ';
+      byte cons = unpackCondCons(e);
+
+      if (cons >= 10){
+        str[9] = '1';
+        str[10] = (cons - 10) + '0';
+      }
+      else{
+        str[9] = cons + '0';
+        str[10] = ' ';
+      } 
+      
+      str[11] = 0;*/
+
+      
+      
+    //  drawText(xOff + 5, y + 20, 1, str, WHITE);
+    }
+
+   
     /*else{
       drawButton(makeButton(100, y, 100, 40, DARKGRAY, LIGHTGRAY, WHITE, (char*)e.val, OP_FUNCS[eType], i));
       
     }*/
     y += EVENT_Y_SIZE;
   }
+  if (ifSwtch == true){
+    xOff += 25;
+  }
+  else{ 
+    xOff = BASE_X_OFF;
+  }
   drawButton(makeButton(xOff, y, 100, 40, WHITE, BLACK, WHITE, "", placeEvent, curEvent->size())); 
+  
 }
 
 void testSame(int u){
@@ -168,6 +246,15 @@ void placeEvent(int ind){
 
     Event e;
     e.op = packOPCode(curEType);
+    e.next = 0;
+    if (ind > 0 && unpackOPCode(curEvent->at(ind - 1)) == IFCOND){
+      e.next = (curEvent->at(ind - 1)).next + 1;
+    }
+    else{
+      e.next = 0;
+    }
+    
+
     
     if (curEType == 0){
     //  e.val = 0;//malloc(sizeof(byte));
@@ -175,6 +262,11 @@ void placeEvent(int ind){
     }
     if (curEType == 1){
       e.val = 0;
+      
+    }
+    if (curEType == 2){
+      e.val = 0;
+      e.next = 0;
       
     }
    
@@ -222,7 +314,11 @@ void event_set_var(int ind){
 void event_if_cond(int ind){
   if (isNewTouch()){
     curE = &(curEvent->at(ind));
+    pushToState(SET_IF_COND);//SELECT_VAR);
   }
+  
+  
+  
 }
 
 void event_transfer(int ind){
