@@ -2,7 +2,7 @@
 
 void drawSelectVar(void){
   tft.fillScreen(LIGHTGRAY);
-  Serial.println("RIP");
+  //Serial.println("RIP");
   char *varName = "Var 0 ";
   for (int i = 0; i < 2; i++){
     for (int j = 0; j < 8; j++){

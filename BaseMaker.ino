@@ -43,9 +43,9 @@ void drawMapMaker(void){
   tft.drawLine(tileBoxS * 2, 0, tileBoxS * 2, 8 * tileBoxS, WHITE);
   tft.drawLine(tileBoxS, 0, tileBoxS, 8 * tileBoxS, WHITE);
 
-  Button *b = makeButton(70, 200, 60, 36, LIGHTGRAY, DARKGRAY, BLACK, "EVENTS", changeToEventMode, 0);
-  Button *c = makeButton(260, 200, 60, 36, LIGHTGRAY, DARKGRAY, BLACK, "BG COLOR", changeToBackgroundColor, 0);
-  Button *d = makeButton(200, 200, 45, 36, LIGHTGRAY, DARKGRAY, BLACK, "MAPS", changeToMapSelect, 0);
+  Button *b = makeButton(70, 200, 60, 36, LIGHTGRAY, WHITE, BLACK, "EVENTS", changeToEventMode, 0);
+  Button *c = makeButton(260, 200, 60, 36, LIGHTGRAY, WHITE, BLACK, "BG COLOR", changeToBackgroundColor, 0);
+  Button *d = makeButton(200, 200, 45, 36, LIGHTGRAY, WHITE, BLACK, "MAPS", changeToMapSelect, 0);
   drawButton(d);
   drawButton(b);
   drawButton(c);

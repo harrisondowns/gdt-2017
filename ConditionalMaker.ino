@@ -15,8 +15,8 @@ void drawConditionalMaker(void){
   if (grabValueFlag == true){
     keyboardS[keyboardSL] = 0;
     curE->val = pack2Bytes(cType, (byte)atoi(keyboardS));
-    Serial.println("curE->val:");
-    Serial.println((int)curE->val);
+    //Serial.println("curE->val:");
+    //Serial.println((int)curE->val);
     //curE->val = atoi(keyboardS);
     
     grabValueFlag = false;
@@ -29,8 +29,8 @@ void drawConditionalMaker(void){
   char *str = "Var 0 ";
   char *vStr = "xx";
 
-  Serial.println("curE:");
-  Serial.println((int)curE);
+  //Serial.println("curE:");
+  //Serial.println((int)curE);
   byte oper = unpackOperand(*curE);
   if (oper >= 10){
     str[4] = '1';
@@ -73,8 +73,8 @@ void pickCondType(int type){
     cType = type;
     drawRect(124, 35 * cType + 19, 62, 27, RED);
     curE->val = pack2Bytes(type, unpackCondCons(*curE));
-    Serial.print("val is ");
-    Serial.println((int)curE->val);
+    //Serial.print("val is ");
+    //Serial.println((int)curE->val);
   }
 }
 

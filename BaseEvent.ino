@@ -66,12 +66,12 @@ void lol(int rip){
 void exitEvent(int rip){
 
   if (isNewTouch()){
-    Serial.println("Ayo");
-    Serial.println("Stack:");
-    for (int i = 0; i < programStack->size(); i++){
+    //Serial.println("Ayo");
+    //Serial.println("Stack:");
+    //for (int i = 0; i < programStack->size(); i++){
      
-      Serial.println(programStack->at(i));
-    }
+     // Serial.println(programStack->at(i));
+   // }
     popState(0);
   }
 }
