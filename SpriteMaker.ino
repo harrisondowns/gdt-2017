@@ -70,18 +70,18 @@ void drawSpriteMaker(void){
 
   for (int y = 0; y < 8; y++){
     for (int x = 0; x < 8; x++){
-      if (colors[sprites[currentSprite][x][y]] != TRANSPARENT){
-        tft.fillRect(sbX + x * sbS + 1, sbY + y * sbS + 1, sbS - 1, sbS - 1, colors[sprites[currentSprite][x][y]]);
+      if (colors[getFromSprites(currentSprite, x, y)] != TRANSPARENT){
+        tft.fillRect(sbX + x * sbS + 1, sbY + y * sbS + 1, sbS - 1, sbS - 1, colors[getFromSprites(currentSprite, x, y)]);
       }
       else{
-       /* tft.drawLine(sbX + x * sbS + 1, sbY + y * sbS + 1, sbX + (x + 1) * sbS + 1, sbY + (y + 1) * sbS + 1, WHITE);
+        tft.drawLine(sbX + x * sbS + 1, sbY + y * sbS + 1, sbX + (x + 1) * sbS + 1, sbY + (y + 1) * sbS + 1, WHITE);
         tft.drawLine(sbX + (x + 1) * sbS + 1, sbY + y * sbS + 1, sbX + x * sbS + 1, sbY + (y + 1) * sbS + 1, WHITE);
-       */
+       
      //   tft.drawLine((x + 1) * BOXSIZE, BOXSIZE*y + 1, 1 + x * BOXSIZE, BOXSIZE * (y + 1), WHITE);
         
       }
       makeButton(sbX + x * sbS + 1, sbY + y * sbS + 1, sbS - 1, sbS - 1, 
-                              colors[sprites[currentSprite][x][y]], WHITE, BLACK, "", placeTile, y * 8 + x) ;
+                              colors[getFromSprites(currentSprite, x, y)], WHITE, BLACK, "", placeTile, y * 8 + x) ;
 
     }
   }
@@ -98,11 +98,16 @@ void placeTile(int i){
   Button *b = buttons->at(i); 
   Serial.println("i: ");
   Serial.println(i);
-  tft.fillRect(b->x, b->y, sbS - 1, sbS - 1, currentcolor);
+  if (currentcolor != TRANSPARENT){
+    tft.fillRect(b->x, b->y, sbS - 1, sbS - 1, currentcolor);
+  }
+  else{
+    tft.drawLine(b->x, b->y, b->x + sbS - 1, b->y + sbS - 1, WHITE);
+    tft.drawLine(b->x + sbS - 1, b->y, b->x, b->y + sbS - 1, WHITE);      
+  }
   int x = i % 8;
   int y = i / 8;
-  sprites[currentSprite][x][y] = colorInd;
-     
+  setSprites(currentSprite, x, y, colorInd);
 }
 
 void runSpriteMaker(void){
