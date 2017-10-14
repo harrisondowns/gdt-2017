@@ -25,6 +25,7 @@ void drawEventMaker(void){
     }
     curE->val = malloc(keyboardSL + 1);
     strcpy(curE->val, keyboardS);
+    ((char*)curE->val)[keyboardSL] = 0;
   }
   
   
@@ -43,14 +44,18 @@ void drawEventMaker(void){
 
   drawButton(makeButton(10, 200, 40, 40, BLUE, WHITE, WHITE, "EXIT", exitEvent, 0));
 
+  drawButton(makeButton(10, 150, 60, 20, RED, BLACK, WHITE, "      DEL", deleteEvent, 0));
+
   renderEventTree();
+
+  drawRect(9, 9 + COMMHEIGHT * curEType, 62, 22, RED);
 }
 
 void selectOPCode(int opCode){
   if (curEType != opCode){
-    drawRect(9, 9 + COMMHEIGHT * curEType, 61, 21, WHITE);
+    drawRect(9, 9 + COMMHEIGHT * curEType, 62, 22, WHITE);
     curEType = opCode;
-    drawRect(9, 9 + COMMHEIGHT * curEType, 61, 21, RED);
+    drawRect(9, 9 + COMMHEIGHT * curEType, 62, 22, RED);
   }
 }
 
@@ -73,7 +78,7 @@ void exitEvent(int rip){
 
 void clearEButtons(){
   int x = 0;
-  for (int i = buttons->size() - 1; i >= 5; i--){
+  for (int i = buttons->size() - 1; i >= 6; i--){
 
     Button *b = buttons->at(i);
     if (b->callFunc != selectOPCode && b->callFunc != exitEvent){
@@ -91,7 +96,7 @@ void renderEventTree(){
   clearEButtons();
   
   int y = 10;
-  fillRect(BASE_X_OFF, y, 120, curEvent->size() * 40, LIGHTGRAY);
+  fillRect(BASE_X_OFF - 2, y - 2, 220, (curEvent->size() + 3 )* 40 + 2, LIGHTGRAY);
   
 
   
@@ -172,7 +177,7 @@ void renderEventTree(){
       drawText(xOff + 5, y + 20, 1, str, WHITE);
 
       
-      byte cond = unpackCondType(e);
+      byte cond = (unpackCondType(e)) % 6;
       drawText(xOff + 5 + 6 * 6, y + 20, 1, conditionals[cond], WHITE);
 
       byte cons = unpackCondCons(e);
@@ -189,7 +194,7 @@ void renderEventTree(){
       
       str[2] = 0;
       
-      drawText(xOff + 5 + 10 * 6, y + 20, 1, str, WHITE);
+      drawText(xOff + 5 + 8 * 6, y + 20, 1, str, WHITE);
       /*Serial.print("cond is ");
       Serial.println(cond);
       if (cond >= 2){
@@ -219,6 +224,59 @@ void renderEventTree(){
       
     //  drawText(xOff + 5, y + 20, 1, str, WHITE);
     }
+    else if (eType == 3){
+      char str[12];
+      str[0] = 'X';
+      str[1] = ':';
+      
+      if (e.x >= 10){
+        str[2] = (e.x / 10) + '0';
+        str[3] = (e.x % 10) + '0';
+      }
+      else if (e.x < 10){
+        str[2] = (e.x % 10) + '0';
+        str[3] = 0;
+      }
+      str[4] = 0;
+
+      drawText(xOff + 5, y + 20, 1, str, WHITE);
+
+      str[0] = 'Y';
+      str[1] = ':';
+      
+      if (e.y >= 10){
+        str[2] = (e.y / 10) + '0';
+        str[3] = (e.y % 10) + '0';
+      }
+      else if (e.y < 10){
+        str[2] = (e.y % 10) + '0';
+        str[3] = 0;
+      }
+      str[4] = 0;
+
+      drawText(xOff + 30, y + 20, 1, str, WHITE);
+
+      str[0] = 'M';
+      str[1] = 'a';
+      str[2] = 'p';
+      str[3] = ':';
+      
+      if (e.z >= 10){
+        str[4] = (e.z / 10) + '0';
+        str[5] = (e.z % 10) + '0';
+      }
+      else if (e.z < 10){
+        str[4] = (e.z % 10) + '0';
+        str[5] = 0;
+      }
+      str[6] = 0;
+
+      drawText(xOff + 65, y + 20, 1, str, WHITE);
+
+      
+      
+
+    }
 
    
     /*else{
@@ -235,6 +293,15 @@ void renderEventTree(){
   }
   drawButton(makeButton(xOff, y, 100, 40, WHITE, BLACK, WHITE, "", placeEvent, curEvent->size())); 
   
+}
+
+void deleteEvent(int u){
+  if (isNewTouch()){
+    if (curEvent->size() > 0){
+      curEvent->pop_back();
+      renderEventTree();
+    }
+  }
 }
 
 void testSame(int u){
@@ -268,6 +335,11 @@ void placeEvent(int ind){
       e.val = 0;
       e.next = 0;
       
+    }
+    if (curEType == 3){
+      e.x = 4;
+      e.y = 3;
+      e.z = 0;
     }
    
   
@@ -318,11 +390,11 @@ void event_if_cond(int ind){
   }
   
   
-  
 }
 
 void event_transfer(int ind){
   if (isNewTouch()){
     curE = &(curEvent->at(ind));
+    pushToState(TRANSFER_MAKER);//SELECT_VAR);
   }
 }
