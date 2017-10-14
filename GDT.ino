@@ -127,6 +127,8 @@ int framesSinceTouch = 0;
 #define BASE_EVENT 5 //event maker
 #define SELECT_VAR 6 // selecting a variable for events
 #define SET_VAR 7 // set var value
+#define BG_COLOR 8 // bg color picker
+#define SET_IF_COND 9 // if conditional picker
 
 // dynamic array of OSState used in popState() and pushToState()
 vector<int>* programStack;
@@ -145,7 +147,9 @@ void (*drawFuncs[])(void) = {&drawSpriteMaker,
                              &drawMapMaker,
                              &drawEventMaker,
                              &drawSelectVar,
-                             &drawSetVar};
+                             &drawSetVar,
+                             drawConditionalMaker,
+                             drawConditionalMaker};
 
 // functions that get called every loop for each OS State
 void (*runFuncs[])(void) = {&runSpriteMaker, 
@@ -155,7 +159,9 @@ void (*runFuncs[])(void) = {&runSpriteMaker,
                             &runMapMaker,
                             &runEventMaker,
                             &runSelectVar,
-                            &runSetVar};
+                            &runSetVar,
+                            runConditionalMaker,
+                            runConditionalMaker};
 
 /* 
  *  #########################################################################
@@ -164,6 +170,8 @@ void (*runFuncs[])(void) = {&runSpriteMaker,
  *  ###                                                                   ###
  *  #########################################################################
 */
+
+const char *conditionals[6] = {">", "<", "==", "<=", ">=", "!="};
 
 int tempA = 0;
 
@@ -415,6 +423,8 @@ void popState(int rip){
 */
 
 
+
+
 /* makeButton() - UI Function that creates a button struct with a given set of variables. DOES NOT
  *                DRAW THE ACTUAL BUTTON. To draw a button, see "drawButton()" down below.
  *          Inputs:
@@ -570,18 +580,36 @@ byte unpackOPCode(struct Event e){
 }
 
 byte packOPCode (byte op){
-  if (op == 0){
+ /* if (op == 0){
     return 0;
   }
   else{
     return 16;
-  }
+  }*/
   
-  //return op << 4;
+  return op << 4;
 }
 
 byte unpackOperand(struct Event e){
   return e.op & 15;
 }
 
+byte unpackCondType(struct Event e){
+  byte r = (byte)((int)e.val >> 8);
+  return r;
+}
+
+byte unpackCondCons(struct Event e){
+  return (byte)((int)e.val & 255);
+}
+
+void * pack2Bytes(byte a, byte b){
+  int16_t a16 = (int16_t)a;
+  int r = a16 << 8;
+  r = r & 0b1111111100000000;// (char)0;
+  r = r | b;
+  Serial.print("pack: ");
+  Serial.println(r);
+  return (void*) r;
+}
 

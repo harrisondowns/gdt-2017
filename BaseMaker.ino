@@ -56,6 +56,7 @@ void drawMapMaker(void){
           }
         }
   }
+  drawRect(currentTileSelected / 8 * 24, currentTileSelected % 8 * 24, 25, 25, RED);
 }
 
 void changeToSpriteManager(int rip){
