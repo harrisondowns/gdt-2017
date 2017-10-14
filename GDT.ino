@@ -386,7 +386,6 @@ void loop(void) {
 void pushToState(int state){
   Serial.println("pushToState");
   clearButtons();
-  for (int i = 0; i < programStack->size(); i++){
   programStack->push_back(state);
   drawFuncs[state]();
   osState = state;
