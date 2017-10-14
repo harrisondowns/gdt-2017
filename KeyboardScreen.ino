@@ -57,7 +57,7 @@ void drawKeyboard(void){
  kStartY = 10;
 
  
- fillRect(kStartX, kStartY, maxX * 12 + 3, ((kml / 25) + 1) * 20, BLACK);
+ fillRect(kStartX, kStartY, maxX * 12 + 3, ((kml / 25) + 1) * 16, BLACK);
  kStartX += 2;
  kStartY += 2;
  onlyNums = false;
