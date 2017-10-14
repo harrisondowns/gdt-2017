@@ -18,6 +18,7 @@ bool ifSwtch = false;
 int curEType = 0;
 
 void drawEventMaker(void){
+  Serial.print("DRAWING EVENT MAKER \n");
   if (grabStringFlag == true){
    // curE->val = keyboardS;
     if (curE->val != NULL){
@@ -29,13 +30,15 @@ void drawEventMaker(void){
   
   
   tft.fillScreen(LIGHTGRAY);
+  Serial.print("BUTTONING\n");
   tempA = 10;
   drawButton(makeButton(10, tempA, 60, 20, DARKGRAY, WHITE, WHITE, "Say Text", selectOPCode, SAYTEXT));
+  Serial.print("BUTTONED\n");
   tempA += COMMHEIGHT;
   
   drawButton(makeButton(10, tempA, 60, 20, DARKGRAY, WHITE, WHITE, "Set Var", selectOPCode, SETVAR));
   tempA += COMMHEIGHT;
-
+  Serial.print("HALF-BUTTONED\n");
   drawButton(makeButton(10, tempA, 60, 20, DARKGRAY, WHITE, WHITE, "If Cond.", selectOPCode, IFCOND));
   tempA += COMMHEIGHT;
 
@@ -43,6 +46,7 @@ void drawEventMaker(void){
   tempA += COMMHEIGHT;
 
   drawButton(makeButton(10, 200, 40, 40, BLUE, WHITE, WHITE, "EXIT", exitEvent, 0));
+  Serial.print("DONE BUTTONING\n");
 
   renderEventTree();
 }

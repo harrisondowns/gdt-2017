@@ -17,7 +17,6 @@
 #include <TouchScreen.h>   // touch screen library
 
 using namespace std;
-
 /* 
  *  #########################################################################
  *  ###                                                                   ###
@@ -129,8 +128,11 @@ int framesSinceTouch = 0;
 #define BASE_EVENT 5 //event maker
 #define SELECT_VAR 6 // selecting a variable for events
 #define SET_VAR 7 // set var value
-#define BG_COLOR 8 // bg color picker
-#define SET_IF_COND 9 // if conditional picker
+
+#define BG_COLOR 8 // set background color
+#define SET_IF_COND 9
+#define SELECT_MAP 10 // select a map to edit
+
 
 // dynamic array of OSState used in popState() and pushToState()
 vector<int>* programStack;
@@ -141,6 +143,7 @@ vector<Button*>* buttons;
 // osState: current screen of the OS
 int osState = BASE_MAKER;
 
+
 // functions that draw each OS State
 void (*drawFuncs[])(void) = {&drawSpriteMaker, 
                              &drawSpriteManager, 
@@ -150,8 +153,9 @@ void (*drawFuncs[])(void) = {&drawSpriteMaker,
                              &drawEventMaker,
                              &drawSelectVar,
                              &drawSetVar,
-                             drawConditionalMaker,
-                             drawConditionalMaker};
+                             &drawBGColor,
+                             &drawConditionalMaker,
+                             &drawMapSelect};
 
 // functions that get called every loop for each OS State
 void (*runFuncs[])(void) = {&runSpriteMaker, 
@@ -162,8 +166,10 @@ void (*runFuncs[])(void) = {&runSpriteMaker,
                             &runEventMaker,
                             &runSelectVar,
                             &runSetVar,
-                            runConditionalMaker,
-                            runConditionalMaker};
+                            &runBGColor,
+                            &runConditionalMaker,
+                            &runMapSelect};
+
 
 /* 
  *  #########################################################################
@@ -179,6 +185,7 @@ int tempA = 0;
 
 // state variable passed between Sprite Manager and Sprite Maker
 int currentSprite = 0;
+unsigned currentBackground = colors[5];
 
 // keyboard string variable.
 char keyboardS[100];
@@ -260,7 +267,7 @@ TSPoint getTouchPoint(){
   digitalWrite(13, HIGH);
   TSPoint p = ts.getPoint();
   digitalWrite(13, LOW);
-
+  pinMode(23, INPUT);
   pinMode(XM, OUTPUT);
   pinMode(YP, OUTPUT);
 
@@ -404,6 +411,10 @@ void pushToState(int state){
   clearButtons();
   Serial.println("Stack: Begin");
   for (int i = 0; i < programStack->size(); i++){
+    
+    Serial.println(programStack->at(i));
+  }
+  Serial.println("ENDSTACK");
   programStack->push_back(state);
   drawFuncs[state]();
   osState = state;
@@ -450,7 +461,12 @@ void popState(int rip){
  *                par - the variable to pass in to callFunc when it gets called.
   */
 Button* makeButton(int x, int y, int w, int h, unsigned background, unsigned frame, unsigned textColor, char* text, void (*callFunc)(int x), int par){
+  Serial.print("ABOUT TO MALLOC\n");
   Button *newBut = malloc(sizeof(Button));
+  if (newBut == NULL) {
+    Serial.print("BAD MALLOC\n");
+  }
+  Serial.print("GOOD MALLOC\n");
   newBut->x = x;
   newBut->y = y;
   newBut->w = w;
@@ -462,6 +478,7 @@ Button* makeButton(int x, int y, int w, int h, unsigned background, unsigned fra
   newBut->callFunc = callFunc;
   newBut->p = par;
   buttons->push_back(newBut);
+
   return newBut;
 }
 
@@ -470,7 +487,7 @@ Button* makeButton(int x, int y, int w, int h, unsigned background, unsigned fra
 void clearButtons(){
   for (int i = 0; i < buttons->size(); i++){
     Button *b = buttons->at(i);
-    delete b;
+    free(b);
   }
   buttons->clear();
 }
@@ -498,6 +515,7 @@ void drawButton(Button* but){
   tft.setTextColor(but->textColor);
   tft.setTextSize(1);
   tft.println(but->text);
+  Serial.print("BUTTON DRAWN\n");
 }
 
 void drawText(int x, int y, int size, char *text, unsigned color){
@@ -582,18 +600,22 @@ vector<Event>* eventOf(int x, int y, int z){
   return te.events;
 }
 
+vector<Event>* find_event(int x, int y, int z){
+  for (int i = 0; i < tileEvents->size(); i++){
+    TileEvent e = tileEvents->at(i);
+    if (e.x == x && e.y == y && e.mapInd == z){
+      return e.events;
+    }
+  }
+  return NULL;
+}
+
+
 byte unpackOPCode(struct Event e){
   return e.op >> 4;
 }
 
 byte packOPCode (byte op){
- /* if (op == 0){
-    return 0;
-  }
-  else{
-    return 16;
-  }*/
-  
   return op << 4;
 }
 
