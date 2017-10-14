@@ -44,20 +44,18 @@ void drawMapMaker(void){
   tft.drawLine(tileBoxS, 0, tileBoxS, 8 * tileBoxS, WHITE);
 
   Button *b = makeButton(70, 200, 60, 36, LIGHTGRAY, DARKGRAY, BLACK, "EVENTS", changeToEventMode, 0);
-  Button *c = makeButton(220, 200, 70, 36, LIGHTGRAY, DARKGRAY, BLACK, "BG COLOR", changeToBackgroundColor, 0);
+  Button *c = makeButton(260, 200, 60, 36, LIGHTGRAY, DARKGRAY, BLACK, "BG COLOR", changeToBackgroundColor, 0);
+  Button *d = makeButton(200, 200, 45, 36, LIGHTGRAY, DARKGRAY, BLACK, "MAPS", changeToMapSelect, 0);
+  drawButton(d);
   drawButton(b);
   drawButton(c);
 
   drawButton(makeButton(5, 200, 60, 36, LIGHTGRAY, WHITE, BLACK, "SPRITES", changeToSpriteManager, 0));
-  if (isEventMode == true){
-    drawRect(69, 199, 62, 38, RED);
-    for (int i = 0; i < tileEvents->size(); i++){
-          TileEvent e = tileEvents->at(i);
-          if (e.mapInd == currentMap){
-            drawRect(e.x * 32 + 64, e.y * 32, 32, 32, WHITE);
-          }
-        }
-  }
+
+}
+
+void changeToMapSelect(int rip){
+  pushToState(SELECT_MAP);
 }
 
 void changeToBackgroundColor(int rip){
@@ -83,26 +81,12 @@ void selectTilePalette(int ind){
 void changeToEventMode(int rip){
  /* if (isNewTouch()){
     if (isEventMode == false){
-      drawRect(69, 199, 62, 38, RED);
+      drawRect(69, 199, 61, 37, RED);
       isEventMode = true;
-
-      for (int i = 0; i < tileEvents->size(); i++){
-        TileEvent e = tileEvents->at(i);
-        if (e.mapInd == currentMap){
-          drawRect(e.x * 32 + 64, e.y * 32, 32, 32, WHITE);
-        }
-      }
-      
     }
     else{
-      drawRect(69, 199, 62, 38, WHITE);
+      drawRect(69, 199, 61, 37, WHITE);
       isEventMode = false;
-      for (int i = 0; i < tileEvents->size(); i++){
-        TileEvent e = tileEvents->at(i);
-        if (e.mapInd == currentMap){
-          drawRect(e.x * 32 + 64, e.y * 32, 32, 32, backcol);
-        }
-      }
     }
   }*/
   pushToState(BASE_ENGINE);

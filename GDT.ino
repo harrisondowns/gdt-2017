@@ -130,6 +130,8 @@ int framesSinceTouch = 0;
 #define SELECT_VAR 6 // selecting a variable for events
 #define SET_VAR 7 // set var value
 #define BG_COLOR 8 // set background color
+#define SET_IF_CON 9
+#define SELECT_MAP 10 // select a map to edit
 
 // dynamic array of OSState used in popState() and pushToState()
 vector<int>* programStack;
@@ -140,6 +142,14 @@ vector<Button*>* buttons;
 // osState: current screen of the OS
 int osState = BASE_MAKER;
 
+void drawConditionalMaker(void){
+  
+}
+
+void runConditionalMaker(void){
+  
+}
+
 // functions that draw each OS State
 void (*drawFuncs[])(void) = {&drawSpriteMaker, 
                              &drawSpriteManager, 
@@ -149,7 +159,9 @@ void (*drawFuncs[])(void) = {&drawSpriteMaker,
                              &drawEventMaker,
                              &drawSelectVar,
                              &drawSetVar,
-                             &drawBGColor};
+                             &drawBGColor,
+                             &drawConditionalMaker,
+                             &drawMapSelect};
 
 // functions that get called every loop for each OS State
 void (*runFuncs[])(void) = {&runSpriteMaker, 
@@ -160,7 +172,10 @@ void (*runFuncs[])(void) = {&runSpriteMaker,
                             &runEventMaker,
                             &runSelectVar,
                             &runSetVar,
-                            &runBGColor};
+                            &runBGColor,
+                            &runConditionalMaker,
+                            &runMapSelect};
+
 
 /* 
  *  #########################################################################
@@ -587,14 +602,7 @@ byte unpackOPCode(struct Event e){
 }
 
 byte packOPCode (byte op){
-  if (op == 0){
-    return 0;
-  }
-  else{
-    return 16;
-  }
-  
-  //return op << 4;
+  return op << 4;
 }
 
 byte unpackOperand(struct Event e){
