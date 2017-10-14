@@ -3,7 +3,7 @@ const int tileBoxRes = tileBoxS / 8;
 
 bool isEventMode = false;
 
-unsigned backcol = GREEN;
+unsigned backcol = currentBackground;
 int currentTileSelected = 15;
 
 void drawMapMaker(void){
@@ -12,7 +12,7 @@ void drawMapMaker(void){
   //drawSprite(50, 50, 0);
   fillRect(0, 0, 64, 240, BLACK);
   fillRect(64, 192, 319, 240, BLACK);
-  fillRect(64, 0, 8 * 4 * 8, 6 * 4 * 8, backcol);
+  fillRect(64, 0, 8 * 4 * 8, 6 * 4 * 8, currentBackground);
   drawMap(64, 0, currentMap, 4);
 
   for (int j = 0; j < 6; j++){
@@ -44,11 +44,16 @@ void drawMapMaker(void){
   tft.drawLine(tileBoxS * 2, 0, tileBoxS * 2, 8 * tileBoxS, WHITE);
   tft.drawLine(tileBoxS, 0, tileBoxS, 8 * tileBoxS, WHITE);
 
-  Button *b = makeButton(70, 200, 60, 36, LIGHTGRAY, WHITE, BLACK, "EVENTS", changeToEventMode, 0);
+  Button *b = makeButton(70, 200, 60, 36, LIGHTGRAY, DARKGRAY, BLACK, "EVENTS", changeToEventMode, 0);
+  Button *c = makeButton(260, 200, 60, 36, LIGHTGRAY, DARKGRAY, BLACK, "BG COLOR", changeToBackgroundColor, 0);
+  Button *d = makeButton(200, 200, 45, 36, LIGHTGRAY, DARKGRAY, BLACK, "MAPS", changeToMapSelect, 0);
+  drawButton(d);
   drawButton(b);
+  drawButton(c);
 
   drawButton(makeButton(5, 200, 60, 36, LIGHTGRAY, WHITE, BLACK, "SPRITES", changeToSpriteManager, 0));
 
+<<<<<<< HEAD
   drawButton(makeButton(135, 200, 60, 36, LIGHTGRAY, WHITE, BLACK, "PLAY", play, 0));
 
   if (isEventMode == true){
@@ -61,6 +66,16 @@ void drawMapMaker(void){
         }
   }
 
+=======
+}
+
+void changeToMapSelect(int rip){
+  pushToState(SELECT_MAP);
+}
+
+void changeToBackgroundColor(int rip){
+  pushToState(BG_COLOR);
+>>>>>>> origin/run-game
 }
 
 void changeToSpriteManager(int rip){
@@ -86,26 +101,12 @@ void selectTilePalette(int ind){
 void changeToEventMode(int rip){
   if (isNewTouch()){
     if (isEventMode == false){
-      drawRect(69, 199, 62, 38, RED);
+      drawRect(69, 199, 61, 37, RED);
       isEventMode = true;
-
-      for (int i = 0; i < tileEvents->size(); i++){
-        TileEvent e = tileEvents->at(i);
-        if (e.mapInd == currentMap){
-          drawRect(e.x * 32 + 64, e.y * 32, 32, 32, WHITE);
-        }
-      }
-      
     }
     else{
-      drawRect(69, 199, 62, 38, WHITE);
+      drawRect(69, 199, 61, 37, WHITE);
       isEventMode = false;
-      for (int i = 0; i < tileEvents->size(); i++){
-        TileEvent e = tileEvents->at(i);
-        if (e.mapInd == currentMap){
-          drawRect(e.x * 32 + 64, e.y * 32, 32, 32, backcol);
-        }
-      }
     }
   }
 } 
@@ -122,12 +123,12 @@ void placeMapTile(int coord){
     if (getFromMaps(x, y, z) != currentTileSelected){
      if (currentTileSelected != 15){
       setMaps(x, y, z, currentTileSelected);
-      fillRect(64 + x * 32, y * 32, 32, 32, backcol);
+      fillRect(64 + x * 32, y * 32, 32, 32, currentBackground);
       drawSpriteWithRes(64 + x * 32, y * 32, currentTileSelected, 4);
      }
      else{
       setMaps(x, y, z, currentTileSelected);
-      fillRect(64 + x * 32, y * 32, 32, 32, backcol);
+      fillRect(64 + x * 32, y * 32, 32, 32, currentBackground);
      }
     }
   }

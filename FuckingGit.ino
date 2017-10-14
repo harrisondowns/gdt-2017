@@ -19,7 +19,7 @@ void (*execute_events[])(Event) = { &saytext,
                                     //&transfer_exe 
                                     };
 void drawEngine(void){
-  tft.fillScreen(GREEN);
+  tft.fillScreen(currentBackground);
   drawMap(0, 0, 0, standardMapRes);
   position_player();
   draw_character(player_x, player_y);
@@ -112,7 +112,6 @@ void draw_character(int x, int y)
   ot.x = (x / (standardMapRes * 8)) * (standardMapRes * 8);
   ot.y = (y / (standardMapRes * 8)) * (standardMapRES * 8);
 >>>>>>> Stashed changes
-
   return ot;
 }*/
 
@@ -150,7 +149,6 @@ void draw_character(int x, int y)
       Serial.print("Changing X\n");
       delay(100);
   }
-
   while (blocky1 != blocky2){
       if (blocky1 < blocky2){
         blocky2 = blocky2 - 1;
@@ -191,7 +189,7 @@ bool check_collision(int blockx, int blocky)
 void movement(){
   if(moving){
     if(TimeSinceLastMove > 250){
-       tft.fillRect(player_x, player_y, 40, 40, GREEN);
+       tft.fillRect(player_x, player_y, 40, 40, currentBackground);
         int blockx1 = (target_x / (8 * standardMapRes));
         int blocky1 = (target_y / (8 * standardMapRes));
         int blockx2 = (player_x / (8 * standardMapRes));
@@ -203,7 +201,7 @@ void movement(){
         check_event(blockx2, blocky2);
         if(check_collision(blockx2, blocky2)) {
           blockx2++;
-          tft.fillRect(player_x, player_y, 40, 40, GREEN);
+          tft.fillRect(player_x, player_y, 40, 40, currentBackground);
           draw_character(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8));
           return;
         }
@@ -213,12 +211,12 @@ void movement(){
         check_event(blockx2, blocky2);
         if(check_collision(blockx2, blocky2)) {
           blockx2--;
-          tft.fillRect(player_x, player_y, 40, 40, GREEN);
+          tft.fillRect(player_x, player_y, 40, 40, currentBackground);
           draw_character(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8));
           return;
         }
       }
-      tft.fillRect(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8), 40, 40, GREEN);
+      tft.fillRect(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8), 40, 40, currentBackground);
       draw_character(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8));
     }
 
@@ -228,7 +226,7 @@ void movement(){
         check_event(blockx2, blocky2);
         if(check_collision(blockx2, blocky2)) {
           blocky2++;
-          tft.fillRect(player_x, player_y, 40, 40, GREEN);
+          tft.fillRect(player_x, player_y, 40, 40, currentBackground);
           draw_character(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8));
           return;
         }
@@ -238,12 +236,12 @@ void movement(){
         check_event(blockx2, blocky2);
         if(check_collision(blockx2, blocky2)) {
           blocky2--;
-          tft.fillRect(player_x, player_y, 40, 40, GREEN);
+          tft.fillRect(player_x, player_y, 40, 40, currentBackground);
           draw_character(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8));
           return;
         }
       }
-      tft.fillRect(player_x, player_y, 40, 40, GREEN);
+      tft.fillRect(player_x, player_y, 40, 40, currentBackground);
       draw_character(blockx2 * (standardMapRes * 8), blocky2 * (standardMapRes * 8));
     }
     else {
@@ -253,6 +251,7 @@ void movement(){
     
     }
   }
+<<<<<<< HEAD:BaseEngine.ino
 }
 
 void make_text_box(char *text)
@@ -307,4 +306,7 @@ void setvar(Event curr_event)
   int var = (int) curr_event.val;
                                
 }
+=======
+}  
+>>>>>>> origin/run-game:FuckingGit.ino
 
