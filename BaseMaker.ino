@@ -47,7 +47,15 @@ void drawMapMaker(void){
   drawButton(b);
 
   drawButton(makeButton(5, 200, 60, 36, LIGHTGRAY, WHITE, BLACK, "SPRITES", changeToSpriteManager, 0));
-
+  if (isEventMode == true){
+    drawRect(69, 199, 62, 38, RED);
+    for (int i = 0; i < tileEvents->size(); i++){
+          TileEvent e = tileEvents->at(i);
+          if (e.mapInd == currentMap){
+            drawRect(e.x * 32 + 64, e.y * 32, 32, 32, WHITE);
+          }
+        }
+  }
 }
 
 void changeToSpriteManager(int rip){
@@ -69,12 +77,26 @@ void selectTilePalette(int ind){
 void changeToEventMode(int rip){
   if (isNewTouch()){
     if (isEventMode == false){
-      drawRect(69, 199, 61, 37, RED);
+      drawRect(69, 199, 62, 38, RED);
       isEventMode = true;
+
+      for (int i = 0; i < tileEvents->size(); i++){
+        TileEvent e = tileEvents->at(i);
+        if (e.mapInd == currentMap){
+          drawRect(e.x * 32 + 64, e.y * 32, 32, 32, WHITE);
+        }
+      }
+      
     }
     else{
-      drawRect(69, 199, 61, 37, WHITE);
+      drawRect(69, 199, 62, 38, WHITE);
       isEventMode = false;
+      for (int i = 0; i < tileEvents->size(); i++){
+        TileEvent e = tileEvents->at(i);
+        if (e.mapInd == currentMap){
+          drawRect(e.x * 32 + 64, e.y * 32, 32, 32, backcol);
+        }
+      }
     }
   }
 }
