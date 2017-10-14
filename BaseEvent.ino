@@ -7,11 +7,25 @@
 
 const char* OP_STRINGS[] = {"Say Text", "Set Var", "If Cond.", "Transfer"};
 
+const void (*OP_FUNCS[])(int) = {&event_say_text, &event_set_var, &event_if_cond, &event_transfer};
+
+bool grabStringFlag = false;
+
 
 
 int curEType = 0;
 
 void drawEventMaker(void){
+  if (grabStringFlag == true){
+   // curE->val = keyboardS;
+    if (curE->val != NULL){
+      free(curE->val);
+    }
+    curE->val = malloc(keyboardSL + 1);
+    strcpy(curE->val, keyboardS);
+  }
+
+  
   tft.fillScreen(LIGHTGRAY);
 
   tempA = 10;
@@ -27,7 +41,7 @@ void drawEventMaker(void){
   drawButton(makeButton(10, tempA, 60, 20, DARKGRAY, LIGHTGRAY, WHITE, "Transfer", selectOPCode, TRANSFER));
   tempA += COMMHEIGHT;
 
-  drawButton(makeButton(130, 70, 60, 60, DARKGRAY, LIGHTGRAY, WHITE, "BAD!!!!", lol, 2));
+  drawButton(makeButton(10, 200, 40, 40, BLUE, WHITE, WHITE, "EXIT", exitEvent, 0));
 
   renderEventTree();
 }
@@ -37,14 +51,24 @@ void selectOPCode(int opCode){
 }
 
 void lol(int rip){
-  
+  Serial.println("rip");
+}
+
+void exitEvent(int rip){
+  Serial.println("Ayo");
+  Serial.println("Stack:");
+  for (int i = 0; i < programStack->size(); i++){
+   
+    Serial.println(programStack->at(i));
+  }
+  popState(0);
 }
 
 void clearEButtons(){
   for (int i = buttons->size() - 1; i >= 0; i--){
     Button *b = buttons->at(i);
-    if (b->callFunc != &selectOPCode){
-      buttons->erase(i);
+    if (b->callFunc != &selectOPCode && b->callFunc != &exitEvent){
+      buttons->erase(buttons->begin() + i);
     }
   }
 }
@@ -60,7 +84,31 @@ void renderEventTree(){
   for (int i = 0; i < curEvent->size(); i++){
     Event e = curEvent->at(i);
     byte eType = unpackOPCode(e);
-    drawButton(makeButton(100, y, 100, 40, DARKGRAY, LIGHTGRAY, WHITE, OP_STRINGS[eType], testSame, 0));
+
+    drawButton(makeButton(xOff, y, 100, 40, DARKGRAY, LIGHTGRAY, WHITE, OP_STRINGS[eType], OP_FUNCS[eType], i));
+    if (eType == 0){
+      tempA = 15;
+      if (strlen((char*)e.val) < 15){
+        tempA = strlen((char*)e.val);
+      }
+      
+      char dest[tempA + 1];
+
+      strncpy(dest, (char*)e.val,tempA);
+
+      if (tempA == 15){
+        for (int j = 1; j <= 3; j++){
+          dest[tempA - j] = '.';
+        }
+      }
+      dest[tempA] = 0; //null terminate destination
+      drawText(xOff + 5, y + 20, 1, dest, WHITE);
+    }
+    
+    /*else{
+      drawButton(makeButton(100, y, 100, 40, DARKGRAY, LIGHTGRAY, WHITE, (char*)e.val, OP_FUNCS[eType], i));
+      
+    }*/
     y += EVENT_Y_SIZE;
   }
   drawButton(makeButton(100, y, 100, 40, DARKGRAY, LIGHTGRAY, WHITE, " ", placeEvent, curEvent->size())); 
@@ -73,6 +121,12 @@ void testSame(int u){
 void placeEvent(int ind){
   Event e;
   e.op = packOPCode(curEType);
+
+  if (curEType == 0){
+    e.val = malloc(sizeof(byte));
+    e.val = 0;
+  }
+  
   curEvent->insert(ind, e);
   renderEventTree();
 }
@@ -92,4 +146,29 @@ void runEventMaker(void){
   }
 }
 
+void event_say_text(int ind){
+  if (isNewTouch()){
+   curE = &(curEvent->at(ind));
+   setKeyboardMaxLength(50);
+   grabStringFlag = true;
+   pushToState(KEYBOARD_INPUT);
+  }
+}
 
+void event_set_var(int ind){
+  if (isNewTouch()){
+    curE = &(curEvent->at(ind));
+  }
+}
+
+void event_if_cond(int ind){
+  if (isNewTouch()){
+    curE = &(curEvent->at(ind));
+  }
+}
+
+void event_transfer(int ind){
+  if (isNewTouch()){
+    curE = &(curEvent->at(ind));
+  }
+}
