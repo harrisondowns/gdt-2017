@@ -12,10 +12,12 @@ int TimeSinceLastMove = 0;
 bool moving = false;
 int txt_box_w = 320;
 int txt_box_h = 59;
+vector<Event> *found_event;
+int curr_pos = 0;
 
 void (*execute_events[])(Event) = { &saytext,
                                     &setvar,
-                                    //&ifcond,
+                                    &ifcond,
                                     //&transfer_exe 
                                     };
 void drawEngine(void){
@@ -264,7 +266,7 @@ void make_text_box(char *text)
 
 void check_event(int blockx, int blocky)
 {
-  vector<Event> *found_event = find_event(blockx, blocky, currentMap);
+  found_event = find_event(blockx, blocky, currentMap);
   if (found_event == NULL) {
     return;
   } else {
@@ -278,9 +280,12 @@ void do_events(vector<Event> *events)
   byte operand;
   
   for (int i = 0; i < events->size(); i++) {
+    curr_pos = i;
     OPCode = unpackOPCode((*events)[i]);
-    operand = unpackOperand((*events)[i]);
     execute_events[OPCode]((*events)[i]);
+    if (OPCode == IFCOND) {
+      i++;
+    }
   }
 }
 
@@ -294,7 +299,7 @@ void saytext(Event curr_event)
   while (p.z != 500){
     //Serial.print("waiting\n");
     p = getTouchPoint();
-    }
+  }
   tft.fillRect(0, 240 - txt_box_h - 1, txt_box_w, txt_box_h + 1, GREEN);
   drawMap(0, 0, currentMap, standardMapRes);
   return;
@@ -303,8 +308,32 @@ void saytext(Event curr_event)
                                     
 void setvar(Event curr_event) 
 {
-  int var = (int) curr_event.val;
-                               
+  vars[unpackOperand(curr_event)] = (int) curr_event.val;                              
 }
 
+void ifcond(Event curr_event)
+{
+  int var_i = unpackOperand(curr_event);
+  int condT = unpackCondType(curr_event);
+  int condConst = unpackCondCons(curr_event);
+  bool is_true;
+
+  if(condT == 0) {
+    is_true = vars[var_i] > condConst;
+  } else if (condT == 1) {
+    is_true = vars[var_i] < condConst;
+  } else if (condT == 2) {
+    is_true = vars[var_i] == condConst;
+  } else if (condT == 3) {
+    is_true = vars[var_i] <= condConst;
+  } else if (condT == 4) {
+    is_true = vars[var_i] >= condConst;
+  } else if (condT == 5) {
+    is_true = vars[var_i] != condConst;
+  }
+
+  if (is_true) {
+    int OPCode = unpackOPCode((*found_event)[curr_pos + 1]);
+    execute_events[OPCode]((*found_event)[curr_pos + 1]);
+}
 
