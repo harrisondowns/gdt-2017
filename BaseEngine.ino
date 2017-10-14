@@ -14,9 +14,10 @@ bool moving = false;
 
 void drawEngine(void){
   tft.fillScreen(GREEN);
+  drawMap(0, 0, 0, standardMapRes);
+  position_player();
   draw_character(player_x, player_y);
   //drawSprite(50, 50, 0);
-  drawMap(0, 0, 0, standardMapRes);
 
   
 }
@@ -27,6 +28,29 @@ void runEngine(void){
     //delay(100);
   move_character();
   
+}
+
+void position_player(void)
+{
+  int blockx = player_x / (8 * standardMapRes);
+  int blocky = player_y / (8 * standardMapRes);
+
+  if (getFromMaps(blockx, blocky, currentMap) != 15) {
+    find_space();
+  }
+}
+
+void find_space(void) 
+{
+  int blockx = random(0,8);
+  int blocky = random(0,6);
+
+  while(check_collision(blockx, blocky)) {
+    blockx = random(0,8);
+    blocky = random(0,6);
+  }
+  player_x = blockx * (8 * standardMapRes);
+  player_x = blockx * (8 * standardMapRes);
 }
 
 void move_character(void) 
