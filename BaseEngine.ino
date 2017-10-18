@@ -36,18 +36,18 @@ void runEngine(void){
   is_running = true;
     //delay(100);
 
-  Serial.println("*** RUN ENGINE ****");
-  Serial.print(player_x);
- Serial.print(player_y); 
+  //Serial.println("*** RUN ENGINE ****");
+  //Serial.print(player_x);
+ //Serial.print(player_y); 
   move_character();
-   Serial.println("*** END ENGINE ***");
+   //Serial.println("*** END ENGINE ***");
 
   
   //Serial.print(digitalRead(23));
-  if(digitalRead(23) == HIGH) {
+ // if(digitalRead(23) == HIGH) {
     //Serial.print("HIGH\n");
-    pushToState(BASE_MAKER);
-  }
+  //  pushToState(BASE_MAKER);
+ // }
 }
 
 void position_player(void)
@@ -78,7 +78,7 @@ void move_character(void)
   TimeSinceLastMove += delta;
   TSPoint p = getTouchPoint();
   if ( p.z == 500) {
-    Serial.print("FOUND NEW MOVE\n");
+    //Serial.print("FOUND NEW MOVE\n");
     moving = true;
     target_x = p.x;
     target_y = p.y;
@@ -186,6 +186,13 @@ void draw_character(int x, int y)
 
 bool check_collision(int blockx, int blocky) 
 {
+/* 
+ *  #########################################################################
+ *  ###                                                                   ###
+ *  ###              VERY IMPORTANT SERIAL DO NOT REMOVE                  ###
+ *  ###                                                                   ###
+ *  #########################################################################
+*/
   Serial.print(getFromMaps(blockx, blocky, currentMap));
   if (getFromMaps(blockx, blocky, currentMap) != 15) {
     return true;
@@ -319,7 +326,7 @@ void saytext(Event curr_event)
     //Serial.print("waiting\n");
     p = getTouchPoint();
   }
-  tft.fillRect(0, 240 - txt_box_h - 1, txt_box_w, txt_box_h + 1, GREEN);
+  tft.fillRect(0, 240 - txt_box_h - 1, txt_box_w, txt_box_h + 1, currentBackground);
   drawMap(0, 0, currentMap, standardMapRes);
   return;
   
@@ -363,9 +370,9 @@ void transfer_exe(Event curr_event)
  currentMap = curr_event.z;
  player_x = curr_event.x * (standardMapRes * 8); 
  player_y = curr_event.y * (standardMapRes * 8);
- Serial.println("\n\n\n\n\n\n\nTRANSFER\n\n\n\n\n\n");
- Serial.print(player_x);
- Serial.print(player_y); 
+// Serial.println("\n\n\n\n\n\n\nTRANSFER\n\n\n\n\n\n");
+// Serial.print(player_x);
+// Serial.print(player_y); 
  //target_x = player_x;
  //target_y = player_y;
  tft.fillScreen(currentBackground);

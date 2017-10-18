@@ -411,18 +411,18 @@ void loop(void) {
  *          state - the index of the OS State to push to.
   */
 void pushToState(int state){
-  Serial.println("pushToState");
+  //Serial.println("pushToState");
   clearButtons();
-  Serial.println("Stack: Begin");
-  for (int i = 0; i < programStack->size(); i++){
+  //Serial.println("Stack: Begin");
+  //for (int i = 0; i < programStack->size(); i++){
     
-    Serial.println(programStack->at(i));
-  }
-  Serial.println("ENDSTACK");
+    //Serial.println(programStack->at(i));
+  //}
+  //Serial.println("ENDSTACK");
   programStack->push_back(state);
   drawFuncs[state]();
   osState = state;
-  Serial.println("DONE PUSH!");
+  //Serial.println("DONE PUSH!");
 }
 
 /* popState() - OS Function that pops back to the previous state. 
@@ -431,12 +431,12 @@ void pushToState(int state){
  *                unify the function headers for popState and pushToState
   */
 void popState(int rip){
-  Serial.println("POPPING OS STATE!");
+  //Serial.println("POPPING OS STATE!");
   programStack->pop_back();
   int state = programStack->back();
   programStack->pop_back();
   pushToState(state);
-  Serial.println("PUSH!");
+  //Serial.println("PUSH!");
 }
 
 /* 
@@ -635,8 +635,8 @@ void * pack2Bytes(byte a, byte b){
   int r = a16 << 8;
   r = r & 0b1111111100000000;// (char)0;
   r = r | b;
-  Serial.print("pack: ");
-  Serial.println(r);
+  //Serial.print("pack: ");
+  //Serial.println(r);
   return (void*) r;
 }
 

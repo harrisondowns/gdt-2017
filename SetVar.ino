@@ -26,8 +26,8 @@ void drawSetVar(){
   char *str = "Var 0 ";
   char *vStr = "xx";
 
-  Serial.println("curE:");
-  Serial.println((int)curE);
+  //Serial.println("curE:");
+  //Serial.println((int)curE);
   byte oper = unpackOperand(*curE);
   if (oper >= 10){
     str[4] = '1';
