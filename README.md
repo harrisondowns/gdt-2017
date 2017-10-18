@@ -4,11 +4,7 @@ Game Development Tool for a touch screen device written in Arduino C
 GDT 2017 
 Game Dev Tool README
 
-This program was written as part of Polyhack, the Tufts University fall hackathon. The three team members were:
-
-*Harrison Downs
-*Jason Iskendarian
-*James Hopkins
+This program was written as part of Polyhack, the Tufts University fall hackathon. The three team members were Harrison Downs, Jason Iskendarian, James Hopkins.
 
 We wrote the core of the project in just under 24 hours. We came in with an initial basis of functions that controlled the OS and UI, as well as some graphics tests (a basic version of the sprite maker, keyboard, and sprite manager that were later updated during the event). 
 
