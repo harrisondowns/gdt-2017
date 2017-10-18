@@ -13,3 +13,22 @@ BaseEngine.ino will be the gameplay file. When a user playtests their game, this
 SpriteMaker.ino is the paint window that allows a user to draw sprites to use in other parts of the game.
 
 SpriteManager.ino is the window that allows a user to select a sprite.
+
+KeyboardScreen.ino is the window that allows a user to type in a string using a screen-keyboard. That string is then returned and can be a variable length.
+
+BaseMaker.ino is the basic “maker” window, AKA the map maker. User can place tiles (drawn from the sprites in SpriteMaker) and place “events” (visual scripting elements).
+
+BaseEvent.ino handles the user placing an event down on any tile. An event is a visual script that allows the user to make certain elements on the map intractable. Events include: Text boxes, Setting variables, Comparisons, and Transferring maps.
+
+BGColor.ino allows the user to change the background color of all the maps from light green to any color.
+
+ConditionalMaker.ino allows the user to specify the parameters of a conditional event. Type of conditional and the two variables being compared are used.
+
+MapSelect.ino lets the user select a map. Either to draw on for BaseMaker.ino or as part of a transfer event.
+
+SelectVar.ino lets the user select a variable for any specific event.
+
+SetVar.ino lets the user specify the parameters of a set variable event. The variable and the value to set it to are used.
+
+TransferMaker.ino lets the user specify the parameters for a transfer event. A transfer event takes the x, y coordinates that the player will teleport to and the map ID of the map to go to.
+
