@@ -1,6 +1,6 @@
 /*  
  *  SpriteManager.ino - runs the sprite manager, the screen that allows a user
- *  to select a specific sprite to edit using the SpriteMaker.
+ *  to select a specific sprite to edit using the SpriteMaker. Called from BaseMaker
 */
 
 // UI Vars

@@ -1,3 +1,4 @@
+// Screen for making a transfer event
 
 int tempMapVar = 0;
 

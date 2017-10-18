@@ -1,3 +1,5 @@
+// map select screen for tile map changing or transfer events
+
 #define spriteSpacingW 64
 #define spriteTileBaseX 8
 #define spriteTileBaseY 60

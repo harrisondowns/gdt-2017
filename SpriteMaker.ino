@@ -1,6 +1,7 @@
 /*  
  *  SpriteMaker.ino - responsible for the sprite maker, aka the paint
- *  program that allows a person to draw sprites to use later.
+ *  program that allows a person to draw sprites to use later. Puts them in an
+ *  array
 */
 
 // Save button coordinates

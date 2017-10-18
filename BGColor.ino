@@ -1,3 +1,5 @@
+// background color picker
+
 #define spriteSpacingW 64
 #define spriteTileBaseX 8
 #define spriteTileBaseY 60

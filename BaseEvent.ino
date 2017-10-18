@@ -1,3 +1,4 @@
+// Basic event picker state
 
 #define COMMHEIGHT 30
 

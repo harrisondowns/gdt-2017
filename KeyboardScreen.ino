@@ -1,3 +1,4 @@
+// keyboard screen for typing in strings
 
 const char *keys = "1234567890qwertyuiopasdfghjkl;zxcvbnm,./ ";
 const char *extra = "!@#$%^&*()QWERTYUIOPASDFGHJKL:ZXCVBNM<>? ";

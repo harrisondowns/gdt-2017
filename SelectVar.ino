@@ -1,4 +1,4 @@
-
+// screen for selecting a variable
 
 void drawSelectVar(void){
   tft.fillScreen(LIGHTGRAY);
