@@ -1,5 +1,5 @@
 # gdt-2017
-Game Development Tool for a touch screen device written in Arduino C
+Game Development Tool for a touch screen device written in Arduino C/C++
 
 ![alt text](https://raw.githubusercontent.com/harrisondowns/gdt-2017/master/IMG_2814.png "GDT Screenshot")
 
